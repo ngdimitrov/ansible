@@ -1,0 +1,13 @@
+- hosts: all
+  pre_tasks:
+
+   - name: update repository index (Ubuntu)
+     tags: always
+     apt:
+       update_cache: yes
+     changed_when: false
+     when: ansible_distribution == "Ubuntu"
+
+- hosts: web_servers
+  roles:
+    - web_servers
