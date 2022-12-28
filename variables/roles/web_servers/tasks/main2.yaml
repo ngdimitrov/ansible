@@ -1,7 +1,0 @@
-   - name: install web server packages
-   tags: apache,apache2,centos,httpd,ubuntu
-   package:
-     name:
-       - "{{ apache_package_name }}"
-       - "{{ php_package_name }}"
-     state: present
