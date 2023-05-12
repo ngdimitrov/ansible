@@ -12,6 +12,7 @@ ad hoc tasks can be used to reboot servers, copy files, manage packages and user
 
 - You can see the hostnames on your servers group `ansible multi -i inventory -a "hostname"`
 - How much space is available `ansible multi -i inventory -a "df -h"`
+- Аnything that Ansible automatically finds about the server. `ansible -i inventory db -m setup`
 - Output on ad-hoc commands always is "CHANGED", because, we don't use the Ansible module and so Ansible doesn't know we don't make a change.
 
 # Vagrant Guide - https://docs.ansible.com/ansible/latest/scenario_guides/guide_vagrant.html   https://developer.hashicorp.com/vagrant/docs 
