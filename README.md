@@ -12,7 +12,7 @@ ad hoc tasks can be used to reboot servers, copy files, manage packages and user
 
 - You can see the hostnames on your servers group
 `ansible multi -i inventory -a "hostname"`
-- How much space available `ansible multi -i inventory -a "df -h"`
+- How much space is available `ansible multi -i inventory -a "df -h"`
 
 
 # Vagrant Guide - https://docs.ansible.com/ansible/latest/scenario_guides/guide_vagrant.html   https://developer.hashicorp.com/vagrant/docs 
