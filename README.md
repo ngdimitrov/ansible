@@ -12,8 +12,12 @@ ad hoc tasks can be used to reboot servers, copy files, manage packages and user
 
 - You can see the hostnames on your servers group `ansible multi -i inventory -a "hostname"`
 - How much space is available `ansible multi -i inventory -a "df -h"`
-- Аnything that Ansible automatically finds about the server. `ansible -i inventory db -m setup`
 - Output on ad-hoc commands always is "CHANGED", because, we don't use the Ansible module and so Ansible doesn't know we don't make a change.
+- Аnything that Ansible automatically finds about the server. `ansible -i inventory db -m setup`
+- When we use the `-b` `--become` run like a SUDO user.   `ansible multi -b -m apt -a "name=ntp state=present"`
+- Use for documentation `ansible-doc service` 
+- Manage systemD `ansible -i inventory multi -b -m systemd -a "name=ntp state=started enable=yes"`(about Ubuntu witout enable=yes) DOC -  https://docs.ansible.com/ansible/latest/collections/ansible/builtin/service_module.html
+-  With `--limit "10.0.0.113"` you can limit result `ansible -i inventory app -a "free -m" --limit "*.113"`
 
 # Vagrant Guide - https://docs.ansible.com/ansible/latest/scenario_guides/guide_vagrant.html   https://developer.hashicorp.com/vagrant/docs 
 Vagrant is a tool to manage virtual machine environments, and allows you to configure and use reproducible work environments on top of various virtualization and cloud platforms. It also has integration with Ansible as a provisioner for these virtual machines, and the two tools work together well.
