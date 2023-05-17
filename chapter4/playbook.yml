@@ -1,0 +1,38 @@
+---
+- name: Install Apache
+- host: all 
+  
+  tasks:
+  - name: Install Apache
+    apt:
+      name: 
+        - apache2
+      state: present
+
+ - name: Copy configuration file
+   copy:
+     scr: ""
+     dest: ""
+     owner: root
+     group: root
+     mode: 0644
+  with_items:
+    - scr: apache2.conf
+      dest: /etc/apache2/apache2.conf
+
+  
+
+
+
+  #  tasks:
+  #  - name: Install Apache
+  #    shell: |
+  #      apt install apache2
+  #      cp apache2.conf /etc/apache2/apache2.conf
+
+  #  tasks:
+  #  - name: Install Apache
+  #    command: apt install apache2
+  #  - namme: Cpoy configuration file
+  #    command: >
+  #      cp apache2.conf /etc/apache2/apache2.conf
