@@ -1,0 +1,2 @@
+[solr]
+10.0.0.113 ansible_user=ansible 
