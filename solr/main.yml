@@ -46,8 +46,7 @@
         -u solr
         -s solr
         -p 8983
-      args:  
-        creates: {{ solr_dir }}/bin/solr
+        creates={{ solr_dir }}/bin/solr
      
     - name: Ensure solr is startd and enable at boot.
       service: name=solr state=started enabled=yes
