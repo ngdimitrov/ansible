@@ -1,0 +1,16 @@
+---
+- name: Install Apache.
+  hosts: centos
+  become: true
+
+  tasks:
+    - name: Ensure Apache is installed.
+      yum:
+        name: httpd
+        state: absent
+
+    - name: Ensure Apache is running and starts at boot.
+      service:
+        name: httpd
+        state: started
+        enabled: true      
