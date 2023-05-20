@@ -19,6 +19,7 @@ ad hoc tasks can be used to reboot servers, copy files, manage packages and user
 - Manage systemD `ansible -i inventory multi -b -m systemd -a "name=ntp state=started enable=yes"`(about Ubuntu witout enable=yes) DOC -  https://docs.ansible.com/ansible/latest/collections/ansible/builtin/service_module.html
 -  With `--limit "10.0.0.113"` you can limit result `ansible -i inventory app -a "free -m" --limit "*.113"`
 -  Check syntax `ansible-playbook  main.yml --syntax-check`
+-  Force and continuing after fail task ` ansible-playbook -i inventory apache.yml --force `
 
 #### apt manage module - https://docs.ansible.com/archive/ansible/2.3/apt_module.html
 
