@@ -24,6 +24,7 @@ ad hoc tasks can be used to reboot servers, copy files, manage packages and user
 #### apt manage module - https://docs.ansible.com/archive/ansible/2.3/apt_module.html
 
 # Playbooks
+- `become=true` You can put true, yes, 1 or 0, no, false
 
 
 ##### Vagrant Guide - https://docs.ansible.com/ansible/latest/scenario_guides/guide_vagrant.html   https://developer.hashicorp.com/vagrant/docs 
