@@ -20,7 +20,7 @@ ad hoc tasks can be used to reboot servers, copy files, manage packages and user
 -  With `--limit "10.0.0.113"` you can limit result `ansible -i inventory app -a "free -m" --limit "*.113"`
 -  Check syntax `ansible-playbook  main.yml --syntax-check`
 -  Force and continuing after fail task ` ansible-playbook -i inventory apache.yml --force `
--  You can encrypt file with ansible module `ansible-vault encrypt vars/apy_key.yml`
+-  You can encrypt file with ansible module `ansible-vault encrypt vars/apy_key.yml` But with this command you cann run playbook(will ask you for pass) `ansible-playbook main.yml --ask-vault-pass`
 
 #### apt manage module - https://docs.ansible.com/archive/ansible/2.3/apt_module.html
 
