@@ -22,6 +22,7 @@ ad hoc tasks can be used to reboot servers, copy files, manage packages and user
 -  Check syntax `ansible-playbook  main.yml --syntax-check`
 -  Force and continuing after fail task ` ansible-playbook -i inventory apache.yml --force `
 #### Vault in ansible `ansible-vault` 
+- You can use the vault variable and store all the blanks in another file, making hacking your password file more complicated.
 -  You can encrypt file with ansible module `ansible-vault encrypt vars/apy_key.yml` But with this command you cann run playbook(will ask you for pass) `ansible-playbook main.yml --ask-vault-pass`Also you can save password in hide file and take from file with command `ansible-playbook main.yml --vault-password-file ~/.ansible/api-key-pass.txt` 
 -  Ansible decrypt - `ansible-vault decrypt vars/apy_key.yml`
 -  Edit encrypt file without decrypt with `ansible-vault edit vars/apy_key.yml` and add password
@@ -31,7 +32,9 @@ ad hoc tasks can be used to reboot servers, copy files, manage packages and user
 
 # Playbooks
 - `become=true` You can put true, yes, 1 or 0, no, false
-
+- `ignore_errors: true` If want ignore fail this task
+- `changed_when:` and `failed_when:` this is custom conditions for change or not change output
+- `tags: - api - echo ` (but yml format) 
 
 ##### Vagrant Guide - https://docs.ansible.com/ansible/latest/scenario_guides/guide_vagrant.html   https://developer.hashicorp.com/vagrant/docs 
 Vagrant is a tool to manage virtual machine environments, and allows you to configure and use reproducible work environments on top of various virtualization and cloud platforms. It also has integration with Ansible as a provisioner for these virtual machines, and the two tools work together well.
