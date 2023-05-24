@@ -27,6 +27,7 @@ ad hoc tasks can be used to reboot servers, copy files, manage packages and user
 -  Ansible decrypt - `ansible-vault decrypt vars/apy_key.yml`
 -  Edit encrypt file without decrypt with `ansible-vault edit vars/apy_key.yml` and add password
 -  Chanche password on the encrypt file `ansible-vault rekey vars/apy_key.yml`
+-  Add role from Ansible Galaxy `ansible-galaxy role init test-galaxy`
 
 #### apt manage module - https://docs.ansible.com/archive/ansible/2.3/apt_module.html
 
@@ -37,6 +38,7 @@ ad hoc tasks can be used to reboot servers, copy files, manage packages and user
 - `tags: - api - echo ` (but yml format) add tags in the tasks and you can run only them with this command `ansible-playbook main.yml --tags=api` 
 - ` tasks: - import_tasks: /path/to/file/apache.yml` 
 -  `pre_task: `  - can use for pretasks in playbooks
+-  Ansible config settings - https://docs.ansible.com/ansible/latest/reference_appendices/config.html
 
 ##### Vagrant Guide - https://docs.ansible.com/ansible/latest/scenario_guides/guide_vagrant.html   https://developer.hashicorp.com/vagrant/docs 
 Vagrant is a tool to manage virtual machine environments, and allows you to configure and use reproducible work environments on top of various virtualization and cloud platforms. It also has integration with Ansible as a provisioner for these virtual machines, and the two tools work together well.
