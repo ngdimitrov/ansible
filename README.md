@@ -31,7 +31,7 @@ ad hoc tasks can be used to reboot servers, copy files, manage packages and user
 -  Chanche password on the encrypt file `ansible-vault rekey vars/apy_key.yml`
 -  Add role from Ansible Galaxy `ansible-galaxy role init test-galaxy` `ansible-galaxy collection install geerlingguy.mac` 
 -  Download role `ansible-galaxy install -r requirements.yml`  requirments file - ` roles:  - name: elliotweiser.osx-command-line-tools  version: 2.3.0   - name: geerlingguy.homebrew  version: 4.0.0 `
--  
+-  Yamllint is yaml validator. command - ` yamllint .` `yamllint my-file.yml`
 
 #### apt manage module - https://docs.ansible.com/archive/ansible/2.3/apt_module.html
 
