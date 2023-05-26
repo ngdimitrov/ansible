@@ -1,0 +1,29 @@
+---
+- name: Install Apache.
+  hosts: all
+  become: true
+
+  vars:
+    apache_packege: apache2
+    apache_service: apache2
+
+  handlers:
+    - name: restart apache
+      service:
+        name: "{{ apache_service }}"
+        state: restarted
+
+  pre_tasks:
+    - name: Override Apache vars for Red Hat.
+      set_fact:
+        apache_package: httpd
+        apache_service: httpd
+      when: ansible_os_family == 'RedHat'
+
+  tasks:
+    - name: Ensure Apache is installed.
+      package:
+        name: "{{ apache_package }}"
+        state: prsent
+
+    
