@@ -30,10 +30,10 @@ ad hoc tasks can be used to reboot servers, copy files, manage packages and user
 -  Edit encrypt file without decrypt with `ansible-vault edit vars/apy_key.yml` and add password
 -  Chanche password on the encrypt file `ansible-vault rekey vars/apy_key.yml`
 #### Ansible molecule
-   INSTALL.rst contains instructions on what additional software or setup steps you will need to take in order to allow Molecule to successfully interface with the driver.
-   molecule.yml is the central configuration entrypoint for Molecule. With this file, you can configure each tool that Molecule will employ when testing your role.
-   converge.yml is the playbook file that contains the call for your role. Molecule will invoke this playbook with ansible-playbook and run it against an instance created by the driver.
-   verify.yml is the Ansible file used for testing as Ansible is the default verifier. This allows you to write specific tests against the state of the container after your role has finished executing. Other verifier tools are available Note that testinfra was the default verifier prior to molecule version 3.
+ -  INSTALL.rst contains instructions on what additional software or setup steps you will need to take in order to allow Molecule to successfully interface with the driver.
+ -  molecule.yml is the central configuration entrypoint for Molecule. With this file, you can configure each tool that Molecule will employ when testing your role.
+ -  converge.yml is the playbook file that contains the call for your role. Molecule will invoke this playbook with ansible-playbook and run it against an instance created by the driver.
+ -  verify.yml is the Ansible file used for testing as Ansible is the default verifier. This allows you to write specific tests against the state of the container after your role has finished executing. Other verifier tools are available Note that testinfra was the default verifier prior to molecule version 3.
 #### 9 Basic Security Measures
 ###### Linux server security
 1. Use secure and encrypted communicarion
