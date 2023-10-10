@@ -1,8 +1,8 @@
 - name: "Prerequisites"
-  import_tasks: /root/ansible/uptime-kuma/roles/uptime-kuma/tasks/prerequisites.yml
+  import_tasks: prerequisites.yml
   connection: localhost
   run_once: true
   become: true
 
 - name: "Install uptime-kuma"
-  include_tasks: /root/ansible/uptime-kuma/roles/uptime-kuma/tasks/install_uptime-kuma.yaml
+  include_tasks: install_uptime-kuma.yaml
