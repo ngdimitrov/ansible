@@ -1,4 +1,4 @@
  - hosts: "cluster1"
    roles:
-     - uptime-kuma
+     - main.yaml
    become: true    
