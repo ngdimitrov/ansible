@@ -1,0 +1,39 @@
+---
+- name: Update apt cache
+  apt:
+    update_cache: yes
+    become: yes
+
+- name: Download Uptime-Kuma
+  git:
+    repo: https://github.com/louislam/uptime-kuma.git
+    dest: /opt/uptime-kuma
+    version: 1.21.3
+  become: yes 
+
+- name: "Install NodeJS"
+  apt:
+    name: ["nodejs"]
+    update_cache: yes
+
+- name: Install npm
+  apt:
+    name: npm
+    state: present
+  become: yes
+
+- name: Install pm2
+  command: npm install pm2@latest -g
+  become: yes     
+
+- name: Install Uptime-Kuma
+  command: npm run setup
+  args:
+    chdir: /opt/uptime-kuma
+  become: yes
+
+- name: Start Uptime Kuma
+  command: pm2 start server/server.js --name uptime-kuma
+  args:
+    chdir: /opt/uptime-kuma
+  become: yes

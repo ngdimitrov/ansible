@@ -1,0 +1,9 @@
+
+- name: "Prerequisites"
+  hosts: cluster1
+  tasks: /root/prerequisites.yaml
+  connection: local
+  run_once: true
+  become: true
+
+- include_tasks: /root/conf.yaml
