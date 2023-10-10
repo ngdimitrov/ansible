@@ -7,7 +7,6 @@
      - curl
      - gnupg
 
-
 - name: Create a dir
   file:
      path: /etc/apt/keyrings
@@ -15,7 +14,6 @@
      owner: ansible
      group: ansible
      mode: "0755"
-
 
 - name: Run comand RAW
   raw: |
