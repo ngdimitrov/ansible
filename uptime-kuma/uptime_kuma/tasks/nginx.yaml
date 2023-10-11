@@ -8,6 +8,11 @@
   copy:
     src: nginx-uptime-kuma.conf
     dest: /etc/nginx/sites-available/uptime-kuma
+  
+- name: Start Uptime Kuma Service
+  systemd:
+    name: uptime-kuma
+    state: started
   notify: Enable Uptime Kuma
 
 # handlers:
