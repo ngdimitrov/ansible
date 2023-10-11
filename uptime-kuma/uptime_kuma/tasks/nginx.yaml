@@ -8,12 +8,17 @@
   copy:
     src: nginx-uptime-kuma.conf
     dest: /etc/nginx/sites-available/uptime-kuma
+
+- name: Enable Uptime Kuma
+  command: ln -s /etc/nginx/sites-available/uptime-kuma /etc/nginx/sites-enabled/
+  notify: Reload Nginx
+
   
-- name: Start Uptime Kuma Service
-  systemd:
-    name: uptime-kuma
-    state: started
-  notify: Enable Uptime Kuma
+# - name: Start Uptime Kuma Service
+#   systemd:
+#     name: nginx
+#     state: reload
+#   notify: Start Nginx
 
 # handlers:
 #   - name: Start Nginx
@@ -22,9 +27,6 @@
 #       state: started
 #     notify: Reload Nginx
 
-# - name: Enable Uptime Kuma
-#   command: ln -s /etc/nginx/sites-available/uptime-kuma /etc/nginx/sites-enabled/
-#   notify: Reload Nginx
 
 # - name: Reload Nginx
 #   service:
