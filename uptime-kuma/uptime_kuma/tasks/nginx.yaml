@@ -10,18 +10,18 @@
     dest: /etc/nginx/sites-available/uptime-kuma
   notify: Enable Uptime Kuma
 
-handlers:
-  - name: Start Nginx
-    service:
-      name: nginx
-      state: started
-    notify: Reload Nginx
+# handlers:
+#   - name: Start Nginx
+#     service:
+#       name: nginx
+#       state: started
+#     notify: Reload Nginx
 
-- name: Enable Uptime Kuma
-  command: ln -s /etc/nginx/sites-available/uptime-kuma /etc/nginx/sites-enabled/
-  notify: Reload Nginx
+# - name: Enable Uptime Kuma
+#   command: ln -s /etc/nginx/sites-available/uptime-kuma /etc/nginx/sites-enabled/
+#   notify: Reload Nginx
 
-- name: Reload Nginx
-  service:
-    name: nginx
-    state: reloaded
+# - name: Reload Nginx
+#   service:
+#     name: nginx
+#     state: reloaded
