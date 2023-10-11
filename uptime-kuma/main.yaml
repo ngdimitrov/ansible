@@ -1,6 +1,7 @@
 
-- name: "Prerequisites"
-  import_tasks: main.yaml
-  connection: local
-  run_once: true
-  become: true
+---
+- name: Install Uptime Kuma
+  hosts: cluster1
+  become: yes
+  roles:
+    - uptime_kuma
