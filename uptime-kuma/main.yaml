@@ -1,0 +1,6 @@
+
+- name: "Prerequisites"
+  import_tasks: main.yaml
+  connection: local
+  run_once: true
+  become: true
