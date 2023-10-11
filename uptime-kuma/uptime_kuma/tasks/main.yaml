@@ -14,23 +14,6 @@
   apt:
     update_cache: yes
 
-- name: Download Node.js setup script
-  get_url:
-    url: "{{nodejs_url}}"
-    dest: /tmp/nodesource_setup.sh
-
-- name: Run Node.js setup script
-  command: sudo bash /tmp/nodesource_setup.sh
-  args:
-    creates: /etc/apt/sources.list.d/nodesource.list
-  become: yes
-
-- name: Install Node.js
-  apt:
-    name: [nodejs]
-    state: present
-  become: yes      
-
 - name: Clone Uptime Kuma repository
   git:
     repo: "{{uptime_kuma_repo}}"
