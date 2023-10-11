@@ -16,7 +16,7 @@
 
 - name: Download Node.js setup script
   get_url:
-    url: https://deb.nodesource.com/setup_16.x
+    url: "{{nodejs_url}}"
     dest: /tmp/nodesource_setup.sh
 
 - name: Run Node.js setup script
@@ -33,7 +33,7 @@
 
 - name: Clone Uptime Kuma repository
   git:
-    repo: https://github.com/louislam/uptime-kuma.git
+    repo: "{{uptime_kuma_repo}}"
     dest: /opt/uptime-kuma
     version: "{{uptime_kuma_version}}"
   become: yes
@@ -59,4 +59,7 @@
   args:
     chdir: /opt/uptime-kuma
   become: yes
+
+  - name: "Install nginx"
+  include_tasks: nginx.yaml
 
