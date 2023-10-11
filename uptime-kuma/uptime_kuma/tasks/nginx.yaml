@@ -11,14 +11,12 @@
 
 - name: Enable Uptime Kuma
   command: ln -s /etc/nginx/sites-available/uptime-kuma /etc/nginx/sites-enabled/
-  notify: Reload Nginx
-
-  
-# - name: Start Uptime Kuma Service
-#   systemd:
-#     name: nginx
-#     state: reload
-#   notify: Start Nginx
+ 
+- name: Start NginxService
+  systemd:
+    name: nginx
+    state: reload
+  notify: Start Nginx
 
 # handlers:
 #   - name: Start Nginx
