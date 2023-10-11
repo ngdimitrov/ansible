@@ -14,12 +14,12 @@
   apt:
     update_cache: yes
 
-- name: Download NodeSource setup script
+- name: Download Node.js setup script
   get_url:
     url: https://deb.nodesource.com/setup_16.x
     dest: /tmp/nodesource_setup.sh
 
-- name: Run NodeSource setup script
+- name: Run Node.js setup script
   command: sudo bash /tmp/nodesource_setup.sh
   args:
     creates: /etc/apt/sources.list.d/nodesource.list
