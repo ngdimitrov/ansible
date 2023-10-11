@@ -35,7 +35,7 @@
   git:
     repo: https://github.com/louislam/uptime-kuma.git
     dest: /opt/uptime-kuma
-    version: 1.21.3
+    version: "{{uptime_kuma_version}}"
   become: yes
 
 - name: Install pm2
