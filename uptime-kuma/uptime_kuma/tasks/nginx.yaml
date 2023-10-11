@@ -2,8 +2,7 @@
   apt:
     name: nginx
     state: present  # Ensure Nginx is installed
-  notify: Start Nginx
-
+  
 - name: Copy Nginx configuration for Uptime Kuma
   copy:
     src: nginx-uptime-kuma.conf
