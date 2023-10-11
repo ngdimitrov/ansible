@@ -11,6 +11,7 @@
 
 - name: Enable Uptime Kuma
   command: ln -s /etc/nginx/sites-available/uptime-kuma /etc/nginx/sites-enabled/
+  become: yes
  
 - name: Start NginxService
   systemd:
