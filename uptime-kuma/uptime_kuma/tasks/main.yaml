@@ -3,6 +3,9 @@
   apt:
     update_cache: yes
 
+- name: "Install Node,js"
+  include_tasks: nodejs.yaml
+
 - name: Install required packages
   apt:
     name: [git, curl, software-properties-common]
