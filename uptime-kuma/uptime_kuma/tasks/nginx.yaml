@@ -1,0 +1,5 @@
+- name: Install Node.js
+  apt:
+    name: [nginx]
+    state: present
+  become: yes  
