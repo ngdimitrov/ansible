@@ -8,19 +8,19 @@
     path: /etc/loki
     state: directory
 
-- name: Create /usr/local/bin directory
+- name: Create /opt/loki directory
   file:
-    path: /usr/local/bin
+    path: /opt/loki
     state: directory
     mode: '0755'
 
 - name: Download Loki binary
   get_url:
     url: https://github.com/grafana/loki/releases/download/v2.7.0/loki-linux-amd64.zip
-    dest: /usr/local/bin/loki-linux-amd64.zip
+    dest: /opt/loki/loki-linux-amd64.zip
 
 - name: Unzip Loki binary
   unarchive:
-    src: /usr/local/bin/loki-linux-amd64.zip
-    dest: /usr/local/bin
+    src: /opt/loki/loki-linux-amd64.zip
+    dest: /opt/loki
     remote_src: yes
