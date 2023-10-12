@@ -27,7 +27,6 @@
   loop:
     - /opt/loki
     - /etc/loki
-    - /etc/systemd/system/loki.service
   become: yes
 
 - name: Download Loki binary
@@ -47,12 +46,17 @@
     dest: /etc/loki/loki-config.yaml
     owner: ansible
     group: ansible
-  notify:
-    - restart loki
 
 - name: "setup loki systemd unit file"
   template:
     src: loki.service.j2
     dest: /etc/systemd/system/loki.service
-  notify:
-    - restart loki
+  become: yes
+
+- name: restart loki
+  systemd:
+    name: loki
+    enabled: true
+    daemon_reload: true
+    state: restarted
+  become: yes
