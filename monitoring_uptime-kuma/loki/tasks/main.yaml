@@ -3,19 +3,32 @@
     name: unzip
     state: present
 
-- name: Create /etc/loki directory
-  file:
-    path: /etc/loki
-    state: directory
+# - name: Create /etc/loki directory
+#   file:
+#     path: /etc/loki
+#     state: directory
 
-- name: Create /opt/loki directory
+# - name: Create /opt/loki directory
+#   file:
+#     path: /opt/loki
+#     state: directory
+#     owner: ansible
+#     group: ansible
+#     mode: '0755'
+#   become: yes
+
+- name: Create directories
   file:
-    path: /opt/loki
+    path: "{{ item }}"
     state: directory
     owner: ansible
     group: ansible
     mode: '0755'
+  loop:
+    - /opt/loki
+    - /etc/loki
   become: yes
+
 
 
 - name: Download Loki binary
