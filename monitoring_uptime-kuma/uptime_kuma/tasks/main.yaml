@@ -31,19 +31,19 @@
 - name: Install Uptime Kuma dependencies
   command: npm install
   args:
-    chdir: "{{uptime-kuma_path}}"
+    chdir: /opt/uptime-kuma
   become: yes
 
 - name: Build Uptime Kuma
   command: npm run setup
   args:
-    chdir: "{{uptime-kuma_path}}"
+    chdir: /opt/uptime-kuma
   become: yes
 
 - name: Start Uptime Kuma
   command: pm2 start server/server.js --name uptime-kuma
   args:
-    chdir: "{{uptime-kuma_path}}"
+    chdir: /opt/uptime-kuma
   become: yes
 
 - name: "Install nginx"
