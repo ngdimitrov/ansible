@@ -12,6 +12,7 @@
   file:
     path: /usr/local/bin
     state: directory
+    mode: '0755'
 
 - name: Download Loki binary
   get_url:
