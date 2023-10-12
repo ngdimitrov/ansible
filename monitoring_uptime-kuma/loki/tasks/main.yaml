@@ -13,6 +13,7 @@
     path: /opt/loki
     state: directory
     mode: '0755'
+  become: yes
 
 - name: Download Loki binary
   get_url:
