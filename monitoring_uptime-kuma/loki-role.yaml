@@ -1,0 +1,5 @@
+---
+- name: Install Loki
+  become: yes
+  roles:
+    - loki
