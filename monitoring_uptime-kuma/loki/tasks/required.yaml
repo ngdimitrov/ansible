@@ -9,7 +9,7 @@
     state: directory
     owner: "{{ loki_user }}"
     group: "{{ loki_group }}"
-    mode: '0755'
+    mode: '0700'
   loop:
     - /opt/loki
     - /etc/loki

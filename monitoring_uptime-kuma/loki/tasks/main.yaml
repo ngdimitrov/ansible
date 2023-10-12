@@ -20,12 +20,14 @@
   get_url:
     url: https://github.com/grafana/loki/releases/download/v2.7.0/loki-linux-amd64.zip
     dest: /opt/loki
+  become: yes  
 
 - name: Unzip Loki binary
   unarchive:
     src: /opt/loki/loki-linux-amd64.zip
     dest: /opt/loki
     remote_src: yes
+  become: yes  
 
 - name: Setup loki config
   template:
@@ -33,6 +35,7 @@
     dest: /etc/loki/loki-config.yaml
     owner: "{{ loki_user }}"
     group: "{{ loki_group }}"
+  become: yes  
 
 - name: Setup Loki systemd
   template:
