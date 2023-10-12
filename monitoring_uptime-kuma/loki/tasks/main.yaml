@@ -6,6 +6,10 @@
 - name: Create /etc/loki directory
   file:
     path: /etc/loki
+    state: directory
+
+- name: Create /usr/local/bin directory
+  file:
     path: /usr/local/bin
     state: directory
 
