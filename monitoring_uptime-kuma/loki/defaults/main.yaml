@@ -1,0 +1,2 @@
+loki_user: loki
+loki_group: "{{ loki_user }}"

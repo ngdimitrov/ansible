@@ -1,33 +1,18 @@
-- name: Install unzip package
-  apt:
-    name: unzip
+- name: Create loki group
+  group:
+    name: "{{ loki_group }}"
+    system: true
     state: present
 
-# - name: Create /etc/loki directory
-#   file:
-#     path: /etc/loki
-#     state: directory
+- name: "Create loki user"
+  user:
+    name: "{{ loki_user }}"
+    group: "{{ loki_group }}"
+    system: true
+    state: present
 
-# - name: Create /opt/loki directory
-#   file:
-#     path: /opt/loki
-#     state: directory
-#     owner: ansible
-#     group: ansible
-#     mode: '0755'
-#   become: yes
-
-- name: Create directories
-  file:
-    path: "{{ item }}"
-    state: directory
-    owner: ansible
-    group: ansible
-    mode: '0755'
-  loop:
-    - /opt/loki
-    - /etc/loki
-  become: yes
+- name: Install required packages and dir
+  include_tasks: required.yaml
 
 - name: Download Loki binary
   get_url:
@@ -40,20 +25,20 @@
     dest: /opt/loki
     remote_src: yes
 
-- name: "Setup loki config"
+- name: Setup loki config
   template:
     src: loki-config.yaml.j2
     dest: /etc/loki/loki-config.yaml
-    owner: ansible
-    group: ansible
+    owner: "{{ loki_user }}"
+    group: "{{ loki_group }}"
 
-- name: "setup loki systemd unit file"
+- name: Setup Loki systemd
   template:
     src: loki.service.j2
     dest: /etc/systemd/system/loki.service
   become: yes
 
-- name: restart loki
+- name: Restart Loki
   systemd:
     name: loki
     enabled: true
