@@ -3,7 +3,7 @@
   apt:
     update_cache: yes
 
-- name: "Install Node,js"
+- name: "Install Node.js"
   include_tasks: nodejs.yaml
 
 - name: Install required packages
@@ -46,6 +46,6 @@
     chdir: /opt/uptime-kuma
   become: yes
 
-- name: "Install nginx"
+- name: "Install Nginx"
   include_tasks: nginx.yaml
 

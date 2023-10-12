@@ -1,7 +1,7 @@
 - name: Install Nginx
   apt:
     name: nginx
-    state: present  # Ensure Nginx is installed
+    state: present
   
 - name: Copy Nginx configuration for Uptime Kuma
   copy:
