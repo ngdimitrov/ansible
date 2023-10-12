@@ -1,5 +1,4 @@
 ---
-- name: Install Loki
-  become: yes
+- hosts: cluster1
   roles:
     - loki
