@@ -20,7 +20,7 @@
 - name: Clone Uptime Kuma repository
   git:
     repo: "{{uptime_kuma_repo}}"
-    dest: "{{uptime-kuma_path}}"
+    dest: /opt/uptime-kuma
     version: "{{uptime_kuma_version}}"
   become: yes
 
