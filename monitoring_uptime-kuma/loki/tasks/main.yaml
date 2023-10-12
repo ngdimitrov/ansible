@@ -6,6 +6,7 @@
 - name: Create /etc/loki directory
   file:
     path: /etc/loki
+    path: /usr/local/bin
     state: directory
 
 - name: Download Loki binary
