@@ -6,7 +6,7 @@ After=network.target
 User=root
 Group=root
 Type=simple
-ExecStart=/usr/bin/loki-linux-amd64 -config.file /etc/loki/loki-config.yaml
+ExecStart=/opt/loki/loki-linux-amd64 -config.file /etc/loki/loki-config.yaml
 Restart=always
 
 [Install]
