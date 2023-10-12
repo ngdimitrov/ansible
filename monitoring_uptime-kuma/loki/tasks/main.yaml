@@ -12,12 +12,11 @@
   file:
     path: /opt/loki
     state: directory
+    owner: ansible
+    group: ansible
     mode: '0755'
   become: yes
 
-- name: Change ownership of /opt/loki to ansible user
-  become: yes
-  command: chown ansible:ansible /opt/loki
 
 - name: Download Loki binary
   get_url:
