@@ -3,6 +3,7 @@
     name: "{{ loki_group }}"
     system: true
     state: present
+  become: yes
 
 - name: "Create loki user"
   user:
@@ -10,6 +11,7 @@
     group: "{{ loki_group }}"
     system: true
     state: present
+  become: yes
 
 - name: Install required packages and dir
   include_tasks: required.yaml
