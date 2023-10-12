@@ -20,7 +20,7 @@
 - name: Clone Uptime Kuma repository
   git:
     repo: "{{uptime_kuma_repo}}"
-    dest: /opt/uptime-kuma
+    dest: "{{uptime-kuma_path}}"
     version: "{{uptime_kuma_version}}"
   become: yes
 
@@ -31,19 +31,19 @@
 - name: Install Uptime Kuma dependencies
   command: npm install
   args:
-    chdir: /opt/uptime-kuma
+    chdir: "{{uptime-kuma_path}}"
   become: yes
 
 - name: Build Uptime Kuma
   command: npm run setup
   args:
-    chdir: /opt/uptime-kuma
+    chdir: "{{uptime-kuma_path}}"
   become: yes
 
 - name: Start Uptime Kuma
   command: pm2 start server/server.js --name uptime-kuma
   args:
-    chdir: /opt/uptime-kuma
+    chdir: "{{uptime-kuma_path}}"
   become: yes
 
 - name: "Install nginx"
