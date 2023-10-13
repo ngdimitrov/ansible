@@ -1,38 +1,26 @@
-- name: Create loki group
-  group:
-    name: "{{ loki_group }}"
-    system: true
-    state: present
-  become: yes
-
-- name: "Create loki user"
-  user:
-    name: "{{ loki_user }}"
-    group: "{{ loki_group }}"
-    system: true
-    state: present
-  become: yes
+- name: Install required packages and dir
+  include_tasks: prerequisites.yaml
 
 - name: Install required packages and dir
   include_tasks: required.yaml
 
 - name: Download Loki binary
   get_url:
-    url: https://github.com/grafana/loki/releases/download/v2.7.0/loki-linux-amd64.zip
-    dest: /opt/loki
+    url: "{{loki_binary_file}}"
+    dest: "{{loki_installation}}"
   become: yes  
 
 - name: Unzip Loki binary
   unarchive:
-    src: /opt/loki/loki-linux-amd64.zip
-    dest: /opt/loki
+    src: "{{loki_installation}}"/loki-linux-amd64.zip
+    dest: "{{loki_installation}}"
     remote_src: yes
   become: yes  
 
 - name: Setup loki config
   template:
     src: loki-config.yaml.j2
-    dest: /etc/loki/loki-config.yaml
+    dest: "{{loki_config_path}}"/loki-config.yaml
     owner: "{{ loki_user }}"
     group: "{{ loki_group }}"
   become: yes  

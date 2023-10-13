@@ -3,10 +3,10 @@ Description=Loki service
 After=network.target
 
 [Service]
-User=root
-Group=root
+User={{ loki_user }}
+Group={{ loki_group }}
 Type=simple
-ExecStart=/opt/loki/loki-linux-amd64 -config.file /etc/loki/loki-config.yaml
+ExecStart={{loki_installation}}/loki-linux-amd64 -config.file {{loki_config_path}}/loki-config.yaml
 Restart=always
 
 [Install]

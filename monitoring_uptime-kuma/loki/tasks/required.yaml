@@ -1,6 +1,10 @@
+- name: Update apt cache
+  apt:
+    update_cache: yes
+
 - name: Install unzip package
   apt:
-    name: unzip
+    name: [ "zip", "unzip" ]
     state: present
 
 - name: Create directories
@@ -11,6 +15,6 @@
     group: "{{ loki_group }}"
     mode: '0700'
   loop:
-    - /opt/loki
-    - /etc/loki
+    - "{{loki_installation}}"
+    - "{{loki_config_path}}"
   become: yes
