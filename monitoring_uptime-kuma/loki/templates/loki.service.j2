@@ -7,6 +7,8 @@ User=root
 Group=root
 Type=simple
 ExecStart={{loki_installation}}/loki-linux-amd64 -config.file {{loki_config_path}}/loki-config.yaml
+# SyslogIdentifier={{ loki_user }}
+# StandardError=append:/var/log/loki.log
 Restart=always
 
 [Install]
