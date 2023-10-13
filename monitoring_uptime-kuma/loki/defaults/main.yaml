@@ -6,3 +6,4 @@ loki_config_path: /etc/loki
 loki_data_dir: /data/loki
 loki_http_port: 3100
 loki_grcp_port: 9095
+loki_config_name: loki-config.yaml

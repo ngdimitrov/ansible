@@ -12,7 +12,7 @@
 
 - name: Unzip Loki binary
   unarchive:
-    src: "{{loki_installation}}"/loki-linux-amd64.zip
+    src: "{{loki_installation}}/{{loki_binary_file | basename }}"
     dest: "{{loki_installation}}"
     remote_src: yes
   become: yes  
@@ -20,7 +20,7 @@
 - name: Setup loki config
   template:
     src: loki-config.yaml.j2
-    dest: "{{loki_config_path}}"/loki-config.yaml
+    dest: "{{loki_config_path}}/{{loki_config_name}}"
     owner: "{{ loki_user }}"
     group: "{{ loki_group }}"
   become: yes  
