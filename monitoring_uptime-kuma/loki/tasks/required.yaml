@@ -5,16 +5,16 @@
 
 - name: Install unzip package
   apt:
-    name: [ "zip", "unzip" ]
+    name: ["zip", "unzip"]
     state: present
   become: yes
 
 - name: Create directories
   file:
-    path: "{{ item }}"
+    path: "{{item}}"
     state: directory
-    owner: "{{ loki_user }}"
-    group: "{{ loki_group }}"
+    owner: "{{loki_user}}"
+    group: "{{loki_group}}"
     mode: '0700'
   loop:
     - "{{loki_installation}}"
