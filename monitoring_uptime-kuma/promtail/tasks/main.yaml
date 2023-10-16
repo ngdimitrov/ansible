@@ -1,28 +1,44 @@
- - name: Download Promtail
-   command: wget https://github.com/grafana/loki/releases/download/v2.7.0/promtail-linux-amd64.zip
-  args:
-    chdir: /tmp
-  async: 1200
-  poll: 0
+- name: Install required packages and dir
+  include_tasks: prerequisites.yaml
 
-- name: Install unzip
-  apt:
-    name: unzip
-    state: present
+- name: Install required packages and dir
+  include_tasks: required.yaml
 
-- name: Unzip Promtail
-  command: unzip /tmp/promtail-linux-amd64.zip
-  args:
-    chdir: /tmp
+- name: Download promtail binary
+  get_url:
+    url: "{{promtail_binary_file}}"
+    dest: "{{promtail_installation}}"
+  become: yes  
 
-- name: Move Promtail to /opt/promtail
-  command: mv /tmp/promtail-linux-amd64 /opt/promtail
+- name: Unzip promtail binary
+  unarchive:
+    src: "{{promtail_installation}}/{{promtail_binary_file | basename }}"
+    dest: "{{promtail_installation}}"
+    remote_src: yes
+  become: yes  
 
-- name: Create /etc/promtail directory
-  file:
-    path: /etc/promtail
-    state: directory
-    mode: '0755'
+- name: Setup promtail config
+  template:
+    src: promtail-config.yaml.j2
+    dest: "{{promtail_config_path}}/{{promtail_config_name}}"
+    owner: "{{ promtail_user }}"
+    group: "{{ promtail_group }}"
+  become: yes  
 
-- name: Set permissions on /opt/promtail
-  command: chown -R promtail:promtail /opt/promtail
+- name: Setup promtail systemd
+  template:
+    src: promtail.service.j2
+    dest: /etc/systemd/system/promtail.service
+  become: yes
+
+- name: Restart promtail
+  systemd:
+    name: promtail
+    enabled: true
+    daemon_reload: true
+    state: restarted
+  become: yes
+
+- name: Move promtail zip file to /tmp
+  command: mv "{{promtail_installation}}/{{promtail_binary_file | basename }}" /tmp/
+  become: yes
