@@ -5,6 +5,5 @@ promtail_installation: /opt/promtail
 promtail_config_path: /etc/promtail
 promtail_data_dir: /data/promtail
 promtail_http_port: 9080
-promtail_grpc_port: 9097
 promtail_config_name: promtail-config.yaml
 promtail_log_file: /var/log/promtail/promtail.log
