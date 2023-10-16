@@ -40,5 +40,5 @@
   become: yes
 
 - name: Move Loki zip file to /tmp
-  command: mv /opt/loki/*.zip /tmp/
+  command: mv /opt/loki/loki*.zip /tmp/
   become: yes
