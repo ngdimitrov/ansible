@@ -40,5 +40,5 @@
   become: yes
 
 - name: Move Loki zip file to /tmp
-  command: mv /opt/loki/loki*.zip /tmp/
+  command: mv "{{loki_installation}}/{{loki_binary_file | basename }}" /tmp/
   become: yes
