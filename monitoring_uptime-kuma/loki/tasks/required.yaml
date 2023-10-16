@@ -19,4 +19,5 @@
   loop:
     - "{{loki_installation}}"
     - "{{loki_config_path}}"
+    - "{{loki_log_file}}"
   become: yes
