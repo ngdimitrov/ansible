@@ -38,3 +38,7 @@
     daemon_reload: true
     state: restarted
   become: yes
+
+- name: Move Loki zip file to /tmp
+  command: mv /opt/loki/loki-linux-amd64.zip /tmp/
+  become: yes
