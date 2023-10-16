@@ -1,6 +1,6 @@
 loki_binary_file: https://github.com/grafana/loki/releases/download/v2.7.0/loki-linux-amd64.zip
 loki_user: loki
-loki_group: "{{ loki_user }}"
+loki_group: "{{loki_user}}"
 loki_installation: /opt/loki
 loki_config_path: /etc/loki
 loki_data_dir: /data/loki

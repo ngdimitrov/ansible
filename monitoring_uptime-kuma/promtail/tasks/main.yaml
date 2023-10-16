@@ -1,0 +1,28 @@
+ - name: Download Promtail
+   command: wget https://github.com/grafana/loki/releases/download/v2.7.0/promtail-linux-amd64.zip
+  args:
+    chdir: /tmp
+  async: 1200
+  poll: 0
+
+- name: Install unzip
+  apt:
+    name: unzip
+    state: present
+
+- name: Unzip Promtail
+  command: unzip /tmp/promtail-linux-amd64.zip
+  args:
+    chdir: /tmp
+
+- name: Move Promtail to /opt/promtail
+  command: mv /tmp/promtail-linux-amd64 /opt/promtail
+
+- name: Create /etc/promtail directory
+  file:
+    path: /etc/promtail
+    state: directory
+    mode: '0755'
+
+- name: Set permissions on /opt/promtail
+  command: chown -R promtail:promtail /opt/promtail
