@@ -1,4 +1,4 @@
-- name: Install required packages and dir
+- name: Create loki user and group
   include_tasks: prerequisites.yaml
 
 - name: Install required packages and dir

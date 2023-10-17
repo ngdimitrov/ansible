@@ -3,13 +3,13 @@
     update_cache: yes
   become: yes
 
-- name: Install unzip package
+- name: Install zip and unzip package
   apt:
     name: ["zip", "unzip"]
     state: present
   become: yes
 
-- name: Create directories
+- name: Create directories for intall and config 
   file:
     path: "{{item}}"
     state: directory

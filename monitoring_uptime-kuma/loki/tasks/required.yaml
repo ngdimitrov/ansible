@@ -9,7 +9,7 @@
     state: present
   become: yes
 
-- name: Create directories
+- name: Create directories for install, conf and logs
   file:
     path: "{{item}}"
     state: directory
