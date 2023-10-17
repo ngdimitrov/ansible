@@ -2,14 +2,14 @@
 Promtail is an agent which ships the contents of local logs to a private Grafana Loki instance or Grafana Cloud.
 
 ## Variables:
-promtail_binary_file: The Promtail source
-promtail_user: user
-promtail_group: user
-promtail_http_port: Port http 
-promtail_grpc_port: Port grcp
-promtail_installation: Path for installation on Promtail
-promtail_config_path: Path for configuration Promtail
-promtail_config_name: Config file
+* promtail_binary_file: The Promtail source
+* promtail_user: user
+* promtail_group: user
+* promtail_http_port: Port http 
+* promtail_grpc_port: Port grcp
+* promtail_installation: Path for installation on Promtail
+* promtail_config_path: Path for configuration Promtail
+* promtail_config_name: Config file
 
 ### Systemd 
 ``````
