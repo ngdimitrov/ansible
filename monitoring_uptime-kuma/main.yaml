@@ -6,3 +6,4 @@
     - uptime_kuma
     - loki
     - promtail
+    - grafana
