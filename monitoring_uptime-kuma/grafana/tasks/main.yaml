@@ -13,8 +13,22 @@
   shell: |
    echo "deb [signed-by=/usr/share/keyrings/grafana.key] https://packages.grafana.com/oss/deb stable main" | sudo tee -a /etc/apt/sources.list.d/grafana.list
 
+- name: Update apt cache
+  apt:
+    update_cache: yes
+  become: yes
+
 - name: "Install grafana"
   apt:
     name: "grafana={{grafana_version}}"
     update_cache: yes
   become: true
+
+
+- name: Restart grafana
+  systemd:
+    name: grafana-server
+    enabled: true
+    daemon_reload: true
+    state: restarted
+  become: yes
