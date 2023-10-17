@@ -1,0 +1,4 @@
+---
+- hosts: cluster1
+  roles:
+    - loki

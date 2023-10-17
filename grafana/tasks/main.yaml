@@ -1,0 +1,33 @@
+- name: Install the prerequisite packages
+  include_tasks: prerequisites.yaml
+
+- name: Import the GPG key
+  become: yes
+  shell: |
+   wget -q -O {{path_import_gpg_key}} https://packages.grafana.com/gpg.key
+  args:
+    creates: "{{path_import_gpg_key}}"
+ 
+- name: Add a repository for stable releases
+  become: yes
+  shell: |
+   echo "deb [signed-by={{path_import_gpg_key}}] {{grafana_repo}}" | sudo tee -a /etc/apt/sources.list.d/grafana.list
+
+- name: Update the list of available packages
+  apt:
+    update_cache: yes
+  become: yes
+
+- name: Install Grafana 
+  apt:
+    name: "grafana={{grafana_version}}"
+    update_cache: yes
+  become: true
+
+- name: Restart grafana
+  systemd:
+    name: grafana-server
+    enabled: true
+    daemon_reload: true
+    state: restarted
+  become: yes
