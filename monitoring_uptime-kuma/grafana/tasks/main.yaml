@@ -6,7 +6,7 @@
   shell: |
    wget -q -O {{path_import_gpg_key}} https://packages.grafana.com/gpg.key
   args:
-    creates: {{path_import_gpg_key}}
+    creates: "{{path_import_gpg_key}}"
  
 - name: Add a repository for stable releases
   become: yes
