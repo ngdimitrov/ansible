@@ -1,0 +1,22 @@
+- name: Update apt cache
+  apt:
+    update_cache: yes
+  become: yes
+
+- name: Install zip and unzip package
+  apt:
+    name: ["zip", "unzip"]
+    state: present
+  become: yes
+
+- name: Create directories for intall and config 
+  file:
+    path: "{{item}}"
+    state: directory
+    owner: "{{promtail_user}}"
+    group: "{{promtail_group}}"
+    mode: '0700'
+  loop:
+    - "{{promtail_installation}}"
+    - "{{promtail_config_path}}"
+  become: yes

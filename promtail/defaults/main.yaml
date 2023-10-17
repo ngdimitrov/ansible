@@ -1,0 +1,8 @@
+promtail_binary_file: https://github.com/grafana/loki/releases/download/v2.7.0/promtail-linux-amd64.zip
+promtail_user: promtail
+promtail_group: "{{promtail_user}}"
+promtail_http_port: 9080
+promtail_grpc_port: 9097
+promtail_installation: /opt/promtail
+promtail_config_path: /etc/promtail
+promtail_config_name: promtail-config.yaml

@@ -1,0 +1,9 @@
+---
+- name: Install Uptime Kuma
+  hosts: cluster1
+  become: yes
+  roles:
+    - uptime_kuma
+    - loki
+    - promtail
+    - grafana

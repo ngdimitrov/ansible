@@ -1,0 +1,26 @@
+- name: Install Nginx
+  apt:
+    name: nginx
+    state: present
+  
+- name: Copy Nginx configuration for Uptime Kuma
+  copy:
+    src: nginx-uptime-kuma.conf
+    dest: /etc/nginx/sites-available/uptime-kuma
+
+ 
+- name: Create a symbolic link for Uptime Kuma configuration
+  file:
+    src: /etc/nginx/sites-available/uptime-kuma
+    dest: /etc/nginx/sites-enabled/uptime-kuma
+    state: link  # This specifies that it's a symbolic link
+
+- name: Remove the default configuration file
+  file:
+    path: /etc/nginx/sites-enabled/default
+    state: absent
+
+- name: Reload Nginx to apply changes
+  service:
+    name: nginx
+    state: reloaded

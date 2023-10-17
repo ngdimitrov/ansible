@@ -1,0 +1,51 @@
+---
+- name: Update apt cache
+  apt:
+    update_cache: yes
+
+- name: "Install Node.js"
+  include_tasks: nodejs.yaml
+
+- name: Install required packages
+  apt:
+    name: [git, curl, software-properties-common]
+    state: present
+  become: yes
+
+- name: Update apt cache
+  become: yes
+  apt:
+    update_cache: yes
+
+- name: Clone Uptime Kuma repository
+  git:
+    repo: "{{uptime_kuma_repo}}"
+    dest: /opt/uptime-kuma
+    version: "{{uptime_kuma_version}}"
+  become: yes
+
+- name: Install pm2
+  command: npm install pm2@latest -g
+  become: yes
+
+- name: Install Uptime Kuma dependencies
+  command: npm install
+  args:
+    chdir: /opt/uptime-kuma
+  become: yes
+
+- name: Build Uptime Kuma
+  command: npm run setup
+  args:
+    chdir: /opt/uptime-kuma
+  become: yes
+
+- name: Start Uptime Kuma
+  command: pm2 start server/server.js --name uptime-kuma
+  args:
+    chdir: /opt/uptime-kuma
+  become: yes
+
+- name: "Install Nginx"
+  include_tasks: nginx.yaml
+
