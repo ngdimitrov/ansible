@@ -1,1 +1,3 @@
 grafana_version: "9.5.*"
+path_import_gpg_key: /usr/share/keyrings/grafana.key
+grafana_repo: https://packages.grafana.com/oss/deb stable main
