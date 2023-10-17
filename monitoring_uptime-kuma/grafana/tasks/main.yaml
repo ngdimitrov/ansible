@@ -8,10 +8,10 @@
   args:
     creates: /usr/share/keyrings/grafana.key
  
-- name: "Copy grafana repo"
-  copy:
-    src: deb https://packages.grafana.com/oss/deb stable main
-    dest: /etc/apt/sources.list.d/grafana.list
+- name: Add Grafana GPG key
+  become: yes
+  shell: |
+   echo "deb [signed-by=/usr/share/keyrings/grafana.key] https://packages.grafana.com/oss/deb stable main" | sudo tee -a /etc/apt/sources.list.d/grafana.list
 
 - name: "Install grafana"
   apt:
