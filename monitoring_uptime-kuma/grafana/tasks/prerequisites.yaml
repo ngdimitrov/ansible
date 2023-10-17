@@ -2,3 +2,4 @@
   apt:
     name: ["software-properties-common", "apt-transport-https"]
     update_cache: yes
+  become: yes
