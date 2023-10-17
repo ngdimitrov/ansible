@@ -1,0 +1,19 @@
+- name: Install needed packets
+  include_tasks: prerequisites.yaml
+
+- name: "Add grafana apt-key"
+  apt_key:
+    url: https://packages.grafana.com/gpg.key
+    dest: /usr/share/keyrings/grafana.key
+    state: present
+
+- name: "Copy grafana repo"
+  copy:
+    src: grafana.list
+    dest: /etc/apt/sources.list.d/grafana.list
+
+- name: "Install grafana"
+  apt:
+    name: "grafana={{grafana_version}}"
+    update_cache: yes
+  become: true
