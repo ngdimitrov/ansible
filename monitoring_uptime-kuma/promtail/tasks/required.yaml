@@ -19,5 +19,4 @@
   loop:
     - "{{promtail_installation}}"
     - "{{promtail_config_path}}"
-    - "{{promtail_log_file}}"
   become: yes

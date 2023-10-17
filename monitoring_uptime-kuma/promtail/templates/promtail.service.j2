@@ -7,8 +7,6 @@ User=root
 Group=root
 Type=simple
 ExecStart={{promtail_installation}}/promtail-linux-amd64 -config.file {{promtail_config_path}}/promtail-config.yaml
-SyslogIdentifier= root
-StandardError=append:{{ promtail_log_file }}
 Restart=always
 
 [Install]
