@@ -1,0 +1,4 @@
+- name: add ssh key
+  authorized_key:
+    user: nikolay
+    key: "ssh-rsa"

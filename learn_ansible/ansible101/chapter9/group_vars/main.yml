@@ -1,0 +1,13 @@
+---
+- host: centos
+  become: true
+
+ tasks:
+   - name: Tell SELinux about SSH'S new port.
+     seport:
+       ports: 2849
+       proto: tcp
+       setype: ssh_port_t
+       state: present
+     
+

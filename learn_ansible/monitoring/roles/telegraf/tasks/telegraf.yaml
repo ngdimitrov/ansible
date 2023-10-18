@@ -1,0 +1,23 @@
+---
+- name: "https"
+  apt:
+    name: apt-transport-https
+    state: present
+      #    update_cache: yes
+
+
+- name: apt key telegraf
+  apt_key:
+    url: https://repos.influxdata.com/influxdata-archive_compat.key
+    state: present
+
+
+- name: telegraf repo
+  copy:
+    src: /etc/ansible/roles/telegraf/templates/influxdb.list.j2
+    dest: /etc/apt/sources.list.d/influxdata.list
+
+- name: install telegraf
+  apt:
+    name: telegraf
+      #    update_cache: yes

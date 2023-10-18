@@ -1,0 +1,10 @@
+
+- name: "Prerequisites"
+  import_tasks: /etc/ansible/roles/statsd/tasks/nodejs.yaml
+  connection: local
+  run_once: true
+  become: false
+
+- include_tasks: /etc/ansible/roles/statsd/tasks/repo.yaml
+
+- include_tasks: /etc/ansible/roles/statsd/tasks/config.yaml

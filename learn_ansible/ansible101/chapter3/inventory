@@ -1,0 +1,11 @@
+[centos]
+10.0.0.71
+
+[centos:vars]
+ansible_user=ansible
+
+[ubuntu]
+10.0.0.72
+
+[ubuntu:vars]
+ansible_user=ansible

@@ -1,0 +1,19 @@
+# Application servers
+[app]
+10.0.0.113
+10.0.0.42
+#10.0.0.15
+
+# Database server
+[db]
+10.0.0.97
+
+#  Group has all the servers (this group will be a group of group)
+[multi:children]
+app
+db
+
+# Variables for all the servers
+[multi:vars]
+ansible_ssh_user=ansible
+ansible_ssh_private_key=/root/.ssh/id_rsa

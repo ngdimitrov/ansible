@@ -1,0 +1,33 @@
+---
+- name: Install Apache
+  hosts: ubuntu
+  become: true 
+  
+  vars:
+    apache_package: apache2
+    apache_service: apache2
+    apache_config_dir: /etc/apache2/sites-enabled
+
+  handlers:
+   - name: restart apache
+     service:
+       name: "{{ apache_service  }}"
+       state: restarted
+
+  tasks:
+   - name: Ensure Apache is installed.
+     package:
+       name: "{{ apache_package  }}"
+       state: present
+    
+   - name: copy test config file.
+     copy:
+      src: /root/ansible/chapter3/files/test.conf
+      dest: "{{ apache_config_dir }}"
+     notify: restart apache     
+
+   - name: Ensure Apache is running and starts at boot.
+     service:
+      name: "{{ apache_service  }}"
+      state: started
+      enabled: true

@@ -1,0 +1,8 @@
+- name: "Setup config.js"
+  template:
+    src: /etc/ansible/roles/statsd/template/config.js.j2
+    dest: /etc/apt/sources.list.d/statsd/exampleConfig.js
+    owner: ansible
+    group: ansible  
+    mode: 0644
+
