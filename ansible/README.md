@@ -76,4 +76,4 @@ Vagrant is a tool to manage virtual machine environments, and allows you to conf
     if ! rpm -qa | grep qw ntp; then
       apt install ntp
       fi
-   
+      
