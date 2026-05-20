@@ -1,7 +1,8 @@
-   - name: install web server packages
-   tags: apache,apache2,centos,httpd,ubuntu
-   package:
-     name:
-       - "{{ apache_package_name }}"
-       - "{{ php_package_name }}"
-     state: present
+---
+- name: Install web server packages (vars-driven).
+  tags: apache,apache2,centos,httpd,ubuntu
+  ansible.builtin.package:
+    name:
+      - "{{ apache_package_name }}"
+      - "{{ php_package_name }}"
+    state: present

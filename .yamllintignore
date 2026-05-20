@@ -1,0 +1,4 @@
+ansible/ansible101/chapter7/00-galaxy/roles/
+ansible/ansible101/03-nodejs/test-galaxy/
+ansible/ansible101/01-vault/vars/api_key.yml
+test/

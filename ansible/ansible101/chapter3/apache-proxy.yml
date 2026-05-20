@@ -1,13 +1,15 @@
+---
 - name: Install Apache.
   hosts: centos
   become: true
 
-  enviroment:
+  environment:
     http_proxy: http://example-proxy:80/
     https_proxy: https://example-proxy:80/
 
   tasks:
     - name: Download file
-      get_url:
-        url: http://ipv4.download.thinkbroadband.com/20MB.zip  
-        dest: /tmp      
+      ansible.builtin.get_url:
+        url: http://ipv4.download.thinkbroadband.com/20MB.zip
+        dest: /tmp/20MB.zip
+        mode: "0644"

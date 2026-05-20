@@ -1,33 +1,51 @@
-- name: Install the prerequisite packages
-  include_tasks: prerequisites.yaml
+---
+- name: Install prerequisite packages
+  ansible.builtin.import_tasks: prerequisites.yaml
+  tags: [grafana, install]
 
-- name: Import the GPG key
-  become: yes
-  shell: |
-   wget -q -O {{path_import_gpg_key}} https://packages.grafana.com/gpg.key
-  args:
-    creates: "{{path_import_gpg_key}}"
- 
-- name: Add a repository for stable releases
-  become: yes
-  shell: |
-   echo "deb [signed-by={{path_import_gpg_key}}] {{grafana_repo}}" | sudo tee -a /etc/apt/sources.list.d/grafana.list
-
-- name: Update the list of available packages
-  apt:
-    update_cache: yes
-  become: yes
-
-- name: Install Grafana 
-  apt:
-    name: "grafana={{grafana_version}}"
-    update_cache: yes
+- name: Download Grafana GPG key
+  ansible.builtin.get_url:
+    url: "{{ grafana_gpg_key_url }}"
+    dest: /tmp/grafana.gpg.key
+    owner: root
+    group: root
+    mode: "0644"
   become: true
+  tags: [grafana, install]
 
-- name: Restart grafana
-  systemd:
+- name: Dearmor Grafana GPG key into apt keyring
+  ansible.builtin.command:
+    cmd: gpg --batch --yes --dearmor -o {{ grafana_keyring_path }} /tmp/grafana.gpg.key
+    creates: "{{ grafana_keyring_path }}"
+  become: true
+  tags: [grafana, install]
+
+- name: Add Grafana apt repository
+  ansible.builtin.apt_repository:
+    repo: "deb [signed-by={{ grafana_keyring_path }}] {{ grafana_repo_url }} {{ grafana_repo_release }} {{ grafana_repo_component }}"
+    filename: grafana
+    state: present
+    update_cache: true
+  become: true
+  tags: [grafana, install]
+
+- name: Install Grafana
+  ansible.builtin.apt:
+    name: "grafana={{ grafana_version }}"
+    state: present
+  become: true
+  notify: Restart Grafana
+  tags: [grafana, install]
+
+- name: Configure Grafana via systemd drop-in
+  ansible.builtin.import_tasks: configure.yaml
+  tags: [grafana, config]
+
+- name: Ensure Grafana service is enabled and started
+  ansible.builtin.systemd:
     name: grafana-server
     enabled: true
     daemon_reload: true
-    state: restarted
-  become: yes
+    state: started
+  become: true
+  tags: [grafana, service]

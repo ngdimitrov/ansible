@@ -1,0 +1,4 @@
+---
+telegraf_gpg_key_url: https://repos.influxdata.com/influxdata-archive_compat.key
+telegraf_keyring_path: /etc/apt/keyrings/influxdata.gpg
+telegraf_repo_url: https://repos.influxdata.com

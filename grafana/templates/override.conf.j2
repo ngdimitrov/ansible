@@ -1,0 +1,8 @@
+{{ ansible_managed | comment(decoration='# ') }}
+[Service]
+Environment=GF_SERVER_HTTP_ADDR={{ grafana_listen_address }}
+Environment=GF_SERVER_HTTP_PORT={{ grafana_http_port }}
+Environment=GF_ANALYTICS_REPORTING_ENABLED={{ grafana_analytics_reporting_enabled | string | lower }}
+{% if grafana_admin_password | length > 0 %}
+Environment=GF_SECURITY_ADMIN_PASSWORD={{ grafana_admin_password }}
+{% endif %}

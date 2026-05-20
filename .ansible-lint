@@ -1,0 +1,19 @@
+---
+profile: production
+
+exclude_paths:
+  - .git/
+  - test/
+  - ansible/ansible101/01-vault/
+  - ansible/ansible101/chapter7/00-galaxy/main.yml
+
+skip_list:
+  - schema[vars]
+
+mock_modules:
+  - community.general.seport
+  - community.general.npm
+
+mock_roles:
+  - elliotweiser.osx-command-line-tools
+  - geerlingguy.homebrew

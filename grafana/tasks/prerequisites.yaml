@@ -1,10 +1,28 @@
+---
 - name: Update apt cache
-  apt:
-    update_cache: yes
-  become: yes
+  ansible.builtin.apt:
+    update_cache: true
+    cache_valid_time: 3600
+  become: true
+  tags: [grafana, install]
 
-- name: Install the prerequisite packages
-  apt:
-    name: ["software-properties-common", "apt-transport-https"]
-    update_cache: yes
-  become: yes
+- name: Install prerequisite packages
+  ansible.builtin.apt:
+    name:
+      - software-properties-common
+      - apt-transport-https
+      - ca-certificates
+      - gnupg
+    state: present
+  become: true
+  tags: [grafana, install]
+
+- name: Ensure apt keyrings directory exists
+  ansible.builtin.file:
+    path: /etc/apt/keyrings
+    state: directory
+    owner: root
+    group: root
+    mode: "0755"
+  become: true
+  tags: [grafana, install]

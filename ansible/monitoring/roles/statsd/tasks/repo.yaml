@@ -1,8 +1,13 @@
-- name: "Add repo StatsD"
-  git:
-    repo: https://github.com/etsy/statsd.git
-    dest: /etc/apt/sources.list.d/statsd
-    clone: yes
-    update: yes
+---
+- name: Install git
+  ansible.builtin.apt:
+    name: git
+    state: present
+  become: true
 
-
+- name: Clone StatsD repository
+  ansible.builtin.git:
+    repo: "{{ statsd_repo }}"
+    dest: "{{ statsd_install_dir }}"
+    version: master
+  become: true

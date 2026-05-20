@@ -1,15 +1,27 @@
+{{ ansible_managed | comment(decoration='# ') }}
 [Unit]
-Description=Loki service
-After=network.target
+Description=Loki log aggregation service
+Documentation=https://grafana.com/docs/loki/
+After=network-online.target
+Wants=network-online.target
 
 [Service]
-User=root
-Group=root
+User={{ loki_user }}
+Group={{ loki_group }}
 Type=simple
-ExecStart={{loki_installation}}/loki-linux-amd64 -config.file {{loki_config_path}}/loki-config.yaml
-SyslogIdentifier= root
-StandardError=append:{{loki_log_file}}/loki.log
+ExecStart={{ loki_installation }}/{{ loki_binary_name }} -config.file={{ loki_config_path }}/{{ loki_config_name }}
+SyslogIdentifier=loki
+StandardError=append:{{ loki_log_dir }}/loki.log
+StandardOutput=append:{{ loki_log_dir }}/loki.log
 Restart=always
+RestartSec=5
+
+# Hardening
+NoNewPrivileges=true
+PrivateTmp=true
+ProtectSystem=full
+ProtectHome=true
+ReadWritePaths={{ loki_data_dir }} {{ loki_log_dir }}
 
 [Install]
 WantedBy=multi-user.target

@@ -1,3 +1,21 @@
-grafana_version: "9.5.*"
-path_import_gpg_key: /usr/share/keyrings/grafana.key
-grafana_repo: https://packages.grafana.com/oss/deb stable main
+---
+grafana_version: "13.0.*"
+
+# APT repository.
+grafana_gpg_key_url: https://apt.grafana.com/gpg.key
+grafana_keyring_path: /etc/apt/keyrings/grafana.gpg
+grafana_repo_url: https://apt.grafana.com
+grafana_repo_release: stable
+grafana_repo_component: main
+
+# Network. Override to 0.0.0.0 to expose externally.
+grafana_listen_address: 127.0.0.1
+grafana_http_port: 3000
+
+# Optional initial admin password. When set, replaces the default 'admin/admin'
+# on first boot via a drop-in override that exports GF_SECURITY_ADMIN_PASSWORD.
+# Provide via ansible-vault or extra-vars; never commit a real password.
+grafana_admin_password: ""
+
+# Disable anonymous usage stats.
+grafana_analytics_reporting_enabled: false

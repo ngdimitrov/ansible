@@ -1,44 +1,73 @@
-- name: Create loki user and group
-  include_tasks: prerequisites.yaml
+---
+- name: Validate target architecture
+  ansible.builtin.assert:
+    that: ansible_facts['architecture'] in loki_arch_map
+    fail_msg: >-
+      Unsupported architecture {{ ansible_facts['architecture'] }};
+      add it to loki_arch_map.
+    success_msg: "Architecture {{ ansible_facts['architecture'] }} maps to {{ loki_arch }}."
+    quiet: true
+  tags: [loki, always]
 
-- name: Install required packages and dir
-  include_tasks: required.yaml
+- name: Create Loki user and group
+  ansible.builtin.import_tasks: prerequisites.yaml
+  tags: [loki, install]
+
+- name: Install required packages and directories
+  ansible.builtin.import_tasks: required.yaml
+  tags: [loki, install]
 
 - name: Download Loki binary
-  get_url:
-    url: "{{loki_binary_file}}"
-    dest: "{{loki_installation}}"
-  become: yes  
+  ansible.builtin.get_url:
+    url: "{{ loki_binary_url }}"
+    dest: "{{ loki_installation }}/{{ loki_binary_url | basename }}"
+    mode: "0644"
+    owner: root
+    group: root
+    checksum: "{{ ('sha256:' ~ loki_binary_sha256) if loki_binary_sha256 else omit }}"
+  become: true
+  tags: [loki, install]
 
 - name: Unzip Loki binary
-  unarchive:
-    src: "{{loki_installation}}/{{loki_binary_file | basename }}"
-    dest: "{{loki_installation}}"
-    remote_src: yes
-  become: yes  
+  ansible.builtin.unarchive:
+    src: "{{ loki_installation }}/{{ loki_binary_url | basename }}"
+    dest: "{{ loki_installation }}"
+    remote_src: true
+    owner: root
+    group: root
+    mode: "0755"
+    creates: "{{ loki_installation }}/{{ loki_binary_name }}"
+  become: true
+  tags: [loki, install]
 
-- name: Setup loki config
-  template:
+- name: Setup Loki config
+  ansible.builtin.template:
     src: loki-config.yaml.j2
-    dest: "{{loki_config_path}}/{{loki_config_name}}"
+    dest: "{{ loki_config_path }}/{{ loki_config_name }}"
     owner: "{{ loki_user }}"
     group: "{{ loki_group }}"
-  become: yes  
+    mode: "0640"
+  become: true
+  notify: Restart Loki
+  tags: [loki, config]
 
-- name: Setup Loki systemd
-  template:
+- name: Setup Loki systemd unit
+  ansible.builtin.template:
     src: loki.service.j2
     dest: /etc/systemd/system/loki.service
-  become: yes
+    owner: root
+    group: root
+    mode: "0644"
+    validate: "systemd-analyze verify %s"
+  become: true
+  notify: Restart Loki
+  tags: [loki, config, systemd]
 
-- name: Restart Loki
-  systemd:
+- name: Ensure Loki service is enabled and started
+  ansible.builtin.systemd:
     name: loki
     enabled: true
     daemon_reload: true
-    state: restarted
-  become: yes
-
-- name: Move Loki zip file to /tmp
-  command: mv "{{loki_installation}}/{{loki_binary_file | basename }}" /tmp/
-  become: yes
+    state: started
+  become: true
+  tags: [loki, service]

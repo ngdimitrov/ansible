@@ -1,13 +1,24 @@
+{{ ansible_managed | comment(decoration='# ') }}
 [Unit]
-Description=Promtail service
-After=network.target
+Description=Promtail log shipping agent
+Documentation=https://grafana.com/docs/loki/latest/clients/promtail/
+After=network-online.target
+Wants=network-online.target
 
 [Service]
-User=root
-Group=root
+User={{ promtail_user }}
+Group={{ promtail_group }}
 Type=simple
-ExecStart={{promtail_installation}}/promtail-linux-amd64 -config.file {{promtail_config_path}}/promtail-config.yaml
+ExecStart={{ promtail_installation }}/{{ promtail_binary_name }} -config.file={{ promtail_config_path }}/{{ promtail_config_name }}
 Restart=always
+RestartSec=5
+
+# Hardening
+NoNewPrivileges=true
+PrivateTmp=true
+ProtectSystem=full
+ProtectHome=true
+ReadWritePaths={{ promtail_positions_file | dirname }}
 
 [Install]
 WantedBy=multi-user.target

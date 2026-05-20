@@ -1,0 +1,18 @@
+---
+galaxy_info:
+  author: Nikolay Dimitrov
+  description: An Ansible role to install and configure Grafana Promtail
+  license: MIT
+  min_ansible_version: "2.10"
+  platforms:
+    - name: Ubuntu
+      versions:
+        - jammy
+        - noble
+  galaxy_tags:
+    - monitoring
+    - logging
+    - promtail
+    - loki
+
+dependencies: []

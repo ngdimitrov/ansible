@@ -1,0 +1,9 @@
+---
+- name: Show current date.
+  ansible.builtin.command: date
+  register: current_date
+  changed_when: false
+
+- name: Print current date.
+  ansible.builtin.debug:
+    var: current_date.stdout

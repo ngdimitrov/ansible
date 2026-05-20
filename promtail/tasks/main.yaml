@@ -1,44 +1,72 @@
-- name: Create promtail user and group
-  include_tasks: prerequisites.yaml
+---
+- name: Validate target architecture
+  ansible.builtin.assert:
+    that: ansible_facts['architecture'] in promtail_arch_map
+    fail_msg: >-
+      Unsupported architecture {{ ansible_facts['architecture'] }};
+      add it to promtail_arch_map.
+    quiet: true
+  tags: [promtail, always]
 
-- name: Install required packages and dir
-  include_tasks: required.yaml
+- name: Create Promtail user and group
+  ansible.builtin.import_tasks: prerequisites.yaml
+  tags: [promtail, install]
 
-- name: Download promtail binary
-  get_url:
-    url: "{{promtail_binary_file}}"
-    dest: "{{promtail_installation}}"
-  become: yes  
+- name: Install required packages and directories
+  ansible.builtin.import_tasks: required.yaml
+  tags: [promtail, install]
 
-- name: Unzip promtail binary
-  unarchive:
-    src: "{{promtail_installation}}/{{promtail_binary_file | basename }}"
-    dest: "{{promtail_installation}}"
-    remote_src: yes
-  become: yes  
+- name: Download Promtail binary
+  ansible.builtin.get_url:
+    url: "{{ promtail_binary_url }}"
+    dest: "{{ promtail_installation }}/{{ promtail_binary_url | basename }}"
+    mode: "0644"
+    owner: root
+    group: root
+    checksum: "{{ ('sha256:' ~ promtail_binary_sha256) if promtail_binary_sha256 else omit }}"
+  become: true
+  tags: [promtail, install]
 
-- name: Setup promtail config
-  template:
+- name: Unzip Promtail binary
+  ansible.builtin.unarchive:
+    src: "{{ promtail_installation }}/{{ promtail_binary_url | basename }}"
+    dest: "{{ promtail_installation }}"
+    remote_src: true
+    owner: root
+    group: root
+    mode: "0755"
+    creates: "{{ promtail_installation }}/{{ promtail_binary_name }}"
+  become: true
+  tags: [promtail, install]
+
+- name: Setup Promtail config
+  ansible.builtin.template:
     src: promtail-config.yaml.j2
-    dest: "{{promtail_config_path}}/{{promtail_config_name}}"
+    dest: "{{ promtail_config_path }}/{{ promtail_config_name }}"
     owner: "{{ promtail_user }}"
     group: "{{ promtail_group }}"
-  become: yes  
+    mode: "0640"
+  become: true
+  notify: Restart Promtail
+  tags: [promtail, config]
 
-- name: Setup promtail systemd
-  template:
+- name: Setup Promtail systemd unit
+  ansible.builtin.template:
     src: promtail.service.j2
     dest: /etc/systemd/system/promtail.service
-  become: yes
+    owner: root
+    group: root
+    mode: "0644"
+    validate: "systemd-analyze verify %s"
+  become: true
+  notify: Restart Promtail
+  tags: [promtail, config, systemd]
 
-- name: Restart promtail
-  systemd:
+- name: Ensure Promtail service is enabled and started
+  ansible.builtin.systemd:
     name: promtail
     enabled: true
     daemon_reload: true
-    state: restarted
-  become: yes
-
-- name: Move promtail zip file to /tmp
-  command: mv "{{promtail_installation}}/{{promtail_binary_file | basename }}" /tmp/
-  become: yes
+    state: started
+  become: true
+  tags: [promtail, service]

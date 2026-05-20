@@ -1,6 +1,17 @@
 ---
 galaxy_info:
   author: Nikolay Dimitrov
-  description: An Ansible role to install Uptime Kuma
+  description: An Ansible role to install and configure Uptime Kuma behind Nginx
   license: MIT
-  min_ansible_version: 2.10
+  min_ansible_version: "2.10"
+  platforms:
+    - name: Ubuntu
+      versions:
+        - jammy
+        - noble
+  galaxy_tags:
+    - monitoring
+    - uptime
+    - nginx
+
+dependencies: []

@@ -1,4 +1,7 @@
-- name: add ssh key
-  authorized_key:
+---
+- name: Add ssh key for nikolay.
+  ansible.posix.authorized_key:
     user: nikolay
-    key: "ssh-rsa"
+    key: "{{ nikolay_ssh_key | default('') }}"
+    state: present
+  when: (nikolay_ssh_key | default('')) | length > 0

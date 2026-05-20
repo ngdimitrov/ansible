@@ -1,77 +1,72 @@
 ---
-
-- hosts: all
+- name: Apply distribution updates.
+  hosts: all
+  become: true
   pre_tasks:
+    - name: Install updates on Ubuntu.
+      tags: always
+      ansible.builtin.apt:
+        upgrade: dist
+        update_cache: true
+      when: ansible_distribution == "Ubuntu"
 
-  - name: install updates Ubuntu 
-    tags: always
-    apt:  
-      upgrade: dist
-      update_cache: yes
-    when: ansible_distribution == "Ubuntu"
-
-
-
-
-- hosts: web_servers
+- name: Provision web servers and deploy HTML.
+  hosts: web_servers
+  become: true
   tasks:
+    - name: Install apache2 and php packages.
+      tags: apache,apache2,ubuntu
+      ansible.builtin.apt:
+        name:
+          - apache2
+          - libapache2-mod-php
+        state: present
+      when: ansible_distribution == "Ubuntu"
 
-   - name: install apache2 and php packages
-     tags: apache,apache2,ubuntu
-     apt:
-       name:
-         - apache2
-         - libapache2-mod-php
-       state: latest
-     when: ansible_distribution == "Ubuntu"  
+    - name: Copy default html file for site.
+      tags: apache,apache2
+      ansible.builtin.copy:
+        src: files/default_site.html
+        dest: /var/www/html/index.html
+        owner: root
+        group: root
+        mode: "0644"
 
-   - name: copy default html file for site
-     tags: apache,apache2
-     copy:
-       src: /etc/ansible/file/default_site.html
-       dest: /var/www/html/index.html
-       owner: root
-       group: root
-       mode: 0644 
-
-
-
-
-- hosts: db_servers
+- name: Provision database servers.
+  hosts: db_servers
+  become: true
   tasks:
+    - name: Install mariadb.
+      tags: db,mariadb,ubuntu
+      ansible.builtin.apt:
+        name: mariadb-server
+        state: present
+      when: ansible_distribution == "Ubuntu"
 
-   - name: install mariadb
-     tags: db,mariadb,ubuntu
-     apt:
-       name: mariadb-server
-       state: latest
-     when: ansible_distribution == "Ubuntu"
-    
-
-    
-    
-- hosts: file_servers
+- name: Provision file servers.
+  hosts: file_servers
+  become: true
   tasks:
+    - name: Install samba package.
+      tags: samba
+      ansible.builtin.apt:
+        name: samba
+        state: present
 
-  - name: install samba package
-    tags: samba
-    apt:
-      name: samba
-      state: latest
-
-
-- hosts: workstations
+- name: Provision workstations with terraform.
+  hosts: workstations
+  become: true
   tasks:
+    - name: Install unzip
+      ansible.builtin.package:
+        name: unzip
+        state: present
 
-  - name: install unzip
-    package:
-      name: unzip
-
-  - name: install terraform
-    unarchive:
-      src: https://releases.hashicorp.com/terraform/0.12.28/terraform_0.12.28_linux_amd64.zip
-      dest: /usr/local/bin
-      remote_src: yes
-      mode: 0755
-      owner: root
-      group: root
+    - name: Install terraform
+      ansible.builtin.unarchive:
+        src: https://releases.hashicorp.com/terraform/1.15.3/terraform_1.15.3_linux_amd64.zip
+        dest: /usr/local/bin
+        remote_src: true
+        mode: "0755"
+        owner: root
+        group: root

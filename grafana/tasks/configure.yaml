@@ -1,0 +1,21 @@
+---
+- name: Ensure Grafana systemd drop-in directory exists
+  ansible.builtin.file:
+    path: /etc/systemd/system/grafana-server.service.d
+    state: directory
+    owner: root
+    group: root
+    mode: "0755"
+  become: true
+  tags: [grafana, config]
+
+- name: Render Grafana systemd drop-in
+  ansible.builtin.template:
+    src: override.conf.j2
+    dest: /etc/systemd/system/grafana-server.service.d/override.conf
+    owner: root
+    group: grafana
+    mode: "0640"
+  become: true
+  notify: Restart Grafana
+  tags: [grafana, config]

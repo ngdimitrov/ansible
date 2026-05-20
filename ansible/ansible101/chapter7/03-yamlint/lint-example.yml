@@ -1,12 +1,15 @@
-- hosts: localhost
-  gather_facts: no
+---
+- name: Demo of yamllint-clean playbook.
+  hosts: localhost
+  gather_facts: false
   connection: local
 
-  tasks: 
+  tasks:
     - name: Register the output of the 'uptime' command.
-      command: uptime
-      register: system_uptime # comment
+      ansible.builtin.command: uptime
+      register: system_uptime
+      changed_when: false
 
-   - name: Print the registered output of the 'uptime' command.
-     debug:
-       var: system_uptime.stdout
+    - name: Print the registered output of the 'uptime' command.
+      ansible.builtin.debug:
+        var: system_uptime.stdout

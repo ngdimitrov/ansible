@@ -1,40 +1,15 @@
 ---
-- name: Install Apache
-  hosts: all 
-  become: true 
+- name: Print system uptime.
+  hosts: localhost
+  gather_facts: false
+  connection: local
 
   tasks:
-    - name: Install Apache
-      apt:
-        name: 
-          - apache2
-        state: present
-          #      become: true    
-    
-    - name: Copy configuration file
-      copy:
-        scr: "{{ item.src }}"
-        dest: "{{ item.dest }}"
-        owner: root
-        group: root
-        mode: 0644
-      with_items:
-        - scr: apache2.conf
-          dest: /etc/apache2/apache2.conf
-     
-  
+    - name: Register the output of the 'uptime' command.
+      ansible.builtin.command: uptime
+      register: system_uptime
+      changed_when: false
 
-
-
-  #  tasks:
-  #  - name: Install Apache
-  #    shell: |
-  #      apt install apache2
-  #      cp apache2.conf /etc/apache2/apache2.conf
-
-  #  tasks:
-  #  - name: Install Apache
-  #    command: apt install apache2
-  #  - namme: Cpoy configuration file
-  #    command: >
-  #      cp apache2.conf /etc/apache2/apache2.conf
+    - name: Print the registered output of the 'uptime' command.
+      ansible.builtin.debug:
+        var: system_uptime.stdout

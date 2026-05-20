@@ -1,31 +1,41 @@
 ---
- 
-- hosts: all
+- name: Apply distribution updates.
+  hosts: all
+  become: true
   pre_tasks:
- 
-   - name: update repository index (Ubuntu)
-     tags: always
-     apt:
-       update_cache: yes
-     changed_when: false
-     when: ansible_distribution == "Ubuntu"
- 
-- hosts: all
+    - name: Update repository index (Ubuntu).
+      tags: always
+      ansible.builtin.apt:
+        update_cache: true
+      changed_when: false
+      when: ansible_distribution == "Ubuntu"
+
+- name: Apply base role to all hosts.
+  hosts: all
+  become: true
   roles:
     - base
-    
-- hosts: workstations
+
+- name: Apply workstations role.
+  hosts: workstations
+  become: true
   roles:
     - workstations
- 
-- hosts: web_servers
+
+- name: Apply web_servers role.
+  hosts: web_servers
+  become: true
   roles:
     - web_servers
- 
-- hosts: db_servers
+
+- name: Apply db_servers role.
+  hosts: db_servers
+  become: true
   roles:
     - db_servers
- 
-- hosts: file_servers
+
+- name: Apply file_servers role.
+  hosts: file_servers
+  become: true
   roles:
     - file_servers

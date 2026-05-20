@@ -1,4 +1,6 @@
 ---
-- hosts: cluster1
+- name: Install Grafana
+  hosts: cluster1
+  become: true
   roles:
     - grafana

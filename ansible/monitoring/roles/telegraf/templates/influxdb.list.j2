@@ -1,2 +1,1 @@
-deb https://repos.influxdata.com/{{ ansible_distribution|lower }} {{ ansible_distribution_release }} stable
-
+deb [signed-by={{ telegraf_keyring_path }}] {{ telegraf_repo_url }}/{{ ansible_distribution | lower }} {{ ansible_distribution_release }} stable

@@ -1,52 +1,56 @@
 ---
-- hosts: all
-  become: yes
+- name: Deploy a Node.js app behind Forever.
+  hosts: all
+  become: true
 
   vars:
     node_apps_location: /usr/local/opt/node
 
   tasks:
     - name: Install EPEL repo.
-      yum:
+      ansible.builtin.dnf:
         name: epel-release
         state: present
 
     - name: Ensure firewalld is stopped (since this is a test server).
-      service:
+      ansible.builtin.service:
         name: firewalld
         state: stopped
 
     - name: Install Node.js and npm.
-      yum:
+      ansible.builtin.dnf:
         name: npm
         state: present
         enablerepo: epel
 
-    - name: Install Forever(to run our Node.js app).
-      npm:
+    - name: Install Forever (to run our Node.js app).
+      community.general.npm:
         name: forever
-        global: yes
+        global: true
         state: present
 
     - name: Ensure Node.js app folder exists.
-      file:
+      ansible.builtin.file:
         path: "{{ node_apps_location }}"
         state: directory
+        mode: "0755"
 
     - name: Copy example Node.js app to server.
-      copy:
+      ansible.builtin.copy:
         src: app
         dest: "{{ node_apps_location }}"
+        mode: "0755"
 
-    - name: Install app dependencies defined in package.json..
-      npm:
+    - name: Install app dependencies defined in package.json.
+      community.general.npm:
         path: "{{ node_apps_location }}/app"
 
     - name: Check list of running Node.js apps.
-      command: forever list
+      ansible.builtin.command: forever list
       register: forever_list
       changed_when: false
 
     - name: Start example Node.js app.
-      command: "forever start {{ node_apps_location }}/app/app.js"
-      when: "forever_list.stdout.find(node_apps_location + 'app/app.js') == -1"
+      ansible.builtin.command: "forever start {{ node_apps_location }}/app/app.js"
+      when: "forever_list.stdout.find(node_apps_location + '/app/app.js') == -1"
+      changed_when: true

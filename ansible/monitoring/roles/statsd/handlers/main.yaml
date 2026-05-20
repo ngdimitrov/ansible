@@ -1,0 +1,8 @@
+---
+- name: Restart StatsD
+  ansible.builtin.systemd:
+    name: statsd
+    daemon_reload: true
+    state: restarted
+  become: true
+  when: false

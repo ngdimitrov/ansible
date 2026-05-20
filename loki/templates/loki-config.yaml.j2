@@ -1,34 +1,64 @@
-auth_enabled: false
+{{ ansible_managed | comment }}
+auth_enabled: {{ loki_auth_enabled | to_json }}
 
 server:
+  http_listen_address: {{ loki_listen_address }}
   http_listen_port: {{ loki_http_port }}
-  grpc_listen_port: {{ loki_grcp_port }}
+  grpc_listen_address: {{ loki_listen_address }}
+  grpc_listen_port: {{ loki_grpc_port }}
+
+common:
+  path_prefix: {{ loki_data_dir }}
+  storage:
+    filesystem:
+      chunks_directory: {{ loki_data_dir }}/chunks
+      rules_directory: {{ loki_data_dir }}/rules
+  replication_factor: 1
+  ring:
+    kvstore:
+      store: inmemory
 
 ingester:
-  lifecycler:
-    address: localhost
-    ring:
-      kvstore:
-        store: inmemory
-      replication_factor: 1
-    final_sleep: 0s
   chunk_idle_period: 5m
   chunk_retain_period: 30s
-  max_transfer_retries: 0
 
 schema_config:
   configs:
-    - from: 2023-10-13
-      store: boltdb
+    - from: 2024-01-01
+      store: tsdb
       object_store: filesystem
-      schema: v11
+      schema: v13
       index:
         prefix: index_
         period: 24h
 
 storage_config:
-  boltdb:
-    directory: {{ loki_data_dir }}/index
-
+  tsdb_shipper:
+    active_index_directory: {{ loki_data_dir }}/tsdb-index
+    cache_location: {{ loki_data_dir }}/tsdb-cache
   filesystem:
     directory: {{ loki_data_dir }}/chunks
+
+compactor:
+  working_directory: {{ loki_data_dir }}/compactor
+  delete_request_store: filesystem
+
+limits_config:
+  allow_structured_metadata: true
+  volume_enabled: true
+  reject_old_samples: true
+  reject_old_samples_max_age: {{ loki_retention_period }}
+
+ruler:
+  storage:
+    type: local
+    local:
+      directory: {{ loki_data_dir }}/rules
+  rule_path: {{ loki_data_dir }}/rules-temp
+  ring:
+    kvstore:
+      store: inmemory
+  enable_api: true
+
+analytics:
+  reporting_enabled: {{ loki_analytics_reporting_enabled | to_json }}

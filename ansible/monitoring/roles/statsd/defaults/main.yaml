@@ -1,0 +1,7 @@
+---
+statsd_repo: https://github.com/statsd/statsd.git
+statsd_install_dir: /opt/statsd
+statsd_user: root
+statsd_group: root
+statsd_port: 8125
+statsd_mgmt_port: 8126

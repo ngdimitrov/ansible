@@ -1,6 +1,7 @@
-- name: install mariadb
+---
+- name: Install mariadb.
   tags: db,mariadb,ubuntu
-  apt:
-   name: mariadb-server
-   state: latest
+  ansible.builtin.apt:
+    name: mariadb-server
+    state: present
   when: ansible_distribution == "Ubuntu"

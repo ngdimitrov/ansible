@@ -1,74 +1,79 @@
 ---
-
-- hosts: all
+- name: Apply distribution updates.
+  hosts: all
+  become: true
   pre_tasks:
+    - name: Install updates on Ubuntu.
+      tags: always
+      ansible.builtin.apt:
+        upgrade: dist
+        update_cache: true
+      when: ansible_distribution == "Ubuntu"
 
-  - name: install updates Ubuntu 
-    tags: always
-    apt:  
-      upgrade: dist
-      update_cache: yes
-    when: ansible_distribution == "Ubuntu"
-
-- hosts: all
-  tasks: 
-
-  - name: create user 
-    tags: always
-    user:
-      name: nikolay
-      groups: root
-
-  - name: add ssh key 
-    tags: always
-    authorized_key:
-      user: nikolay
-      key: ""
-
-  - name: add sudo users file
-    tags: always
-    copy:
-      src: /etc/ansible/sudoer_nikolay
-      dest: /etc/sudoers.d/nikolay
-      owner: root
-      group: root
-      mode: 0440
-
-
-- hosts: web_servers
+- name: Create admin user and configure sudo.
+  hosts: all
+  become: true
+  vars:
+    new_user_name: nikolay
+    new_user_ssh_key: ""
   tasks:
+    - name: Create user.
+      tags: always
+      ansible.builtin.user:
+        name: "{{ new_user_name }}"
+        groups: sudo
+        append: true
+        shell: /bin/bash
+        state: present
 
-   - name: install apache2 and php packages
-     tags: apache,apache2,ubuntu
-     apt:
-       name:
-         - apache2
-         - libapache2-mod-php
-       state: latest
-     when: ansible_distribution == "Ubuntu"  
+    - name: Add SSH key.
+      tags: always
+      ansible.posix.authorized_key:
+        user: "{{ new_user_name }}"
+        key: "{{ new_user_ssh_key }}"
+        state: present
+      when: new_user_ssh_key | length > 0
 
+    - name: Add passwordless sudo for the user.
+      tags: always
+      ansible.builtin.copy:
+        dest: "/etc/sudoers.d/{{ new_user_name }}"
+        content: "{{ new_user_name }} ALL=(ALL) NOPASSWD:ALL\n"
+        owner: root
+        group: root
+        mode: "0440"
+        validate: "visudo -cf %s"
 
-
-
-- hosts: db_servers
+- name: Provision web servers.
+  hosts: web_servers
+  become: true
   tasks:
+    - name: Install apache2 and php packages.
+      tags: apache,apache2,ubuntu
+      ansible.builtin.apt:
+        name:
+          - apache2
+          - libapache2-mod-php
+        state: present
+      when: ansible_distribution == "Ubuntu"
 
-   - name: install mariadb
-     tags: db,mariadb,ubuntu
-     apt:
-       name: mariadb-server
-       state: latest
-     when: ansible_distribution == "Ubuntu"
-    
-
-    
-    
-- hosts: file_servers
+- name: Provision database servers.
+  hosts: db_servers
+  become: true
   tasks:
+    - name: Install mariadb.
+      tags: db,mariadb,ubuntu
+      ansible.builtin.apt:
+        name: mariadb-server
+        state: present
+      when: ansible_distribution == "Ubuntu"
 
-  - name: install samba package
-    tags: samba
-    apt:
-      name: samba
-      state: latest
-
+- name: Provision file servers.
+  hosts: file_servers
+  become: true
+  tasks:
+    - name: Install samba package.
+      tags: samba
+      ansible.builtin.apt:
+        name: samba
+        state: present

@@ -1,14 +1,13 @@
-- host: localhost
-  gather_fact: false
+---
+- name: Demo of include_tasks and ansible-playbook --syntax-check.
+  hosts: localhost
+  gather_facts: false
   connection: local
 
   tasks:
-    # Syntax check will pass whether or not this file exists.
-    - include_task: dates.yml
-
-    # This will cause a failure, since it can be checke statically.
-    - import_tasks: free.yml
+    - name: Include task file conditionally at runtime.
+      ansible.builtin.include_tasks: dates.yml
 
     - name: Print a debug message.
-      debug:
+      ansible.builtin.debug:
         msg: "Hello there."

@@ -1,4 +1,6 @@
-- hosts: prod
-  roles:
-    - telegraf
+---
+- name: Install Telegraf
+  hosts: prod
   become: true
+  roles:
+    - role: telegraf

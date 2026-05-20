@@ -1,8 +1,0 @@
-- name: "Add repo StatsD"
-  git:
-    repo: https://github.com/etsy/statsd.git
-    dest: /etc/apt/sources.list.d/statsd
-    clone: yes
-    update: yes
-
-

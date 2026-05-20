@@ -1,8 +1,9 @@
-- name: "Setup config.js"
-  template:
-    src: /etc/ansible/roles/statsd/template/config.js.j2
-    dest: /etc/apt/sources.list.d/statsd/exampleConfig.js
-    owner: ansible
-    group: ansible  
-    mode: 0644
-
+---
+- name: Render StatsD config
+  ansible.builtin.template:
+    src: config.js.j2
+    dest: "{{ statsd_install_dir }}/config.js"
+    owner: "{{ statsd_user }}"
+    group: "{{ statsd_group }}"
+    mode: "0644"
+  become: true

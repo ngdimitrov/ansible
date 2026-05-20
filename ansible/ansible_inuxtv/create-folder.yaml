@@ -1,12 +1,12 @@
 ---
-
-- hosts: all
+- name: Create a new folder under /root.
+  hosts: all
+  become: true
   tasks:
-
-   - name: create folder
-     file:
+    - name: Create folder.
+      ansible.builtin.file:
         path: /root/new
         state: directory
-        mode: 777
+        mode: "0755"
         owner: root
         group: root

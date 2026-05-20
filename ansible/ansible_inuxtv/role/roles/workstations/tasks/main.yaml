@@ -1,12 +1,14 @@
-- name: install unzip
-  package:
+---
+- name: Install unzip.
+  ansible.builtin.package:
     name: unzip
+    state: present
 
-- name: install terraform
-  unarchive:
-    src: https://releases.hashicorp.com/terraform/0.12.28/terraform_0.12.28_linux_amd64.zip
+- name: Install terraform.
+  ansible.builtin.unarchive:
+    src: https://releases.hashicorp.com/terraform/1.15.3/terraform_1.15.3_linux_amd64.zip
     dest: /usr/local/bin
-    remote_src: yes
-    mode: 0755
+    remote_src: true
+    mode: "0755"
     owner: root
     group: root

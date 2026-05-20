@@ -1,5 +1,0 @@
-- name: "Install NodeJS"
-  apt:
-    name: ["nodejs"]
-    update_cache: yes
-

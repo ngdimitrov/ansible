@@ -1,26 +1,43 @@
+---
 - name: Install Nginx
-  apt:
+  ansible.builtin.apt:
     name: nginx
     state: present
-  
-- name: Copy Nginx configuration for Uptime Kuma
-  copy:
-    src: nginx-uptime-kuma.conf
-    dest: /etc/nginx/sites-available/uptime-kuma
+  become: true
+  tags: [uptime_kuma, install, nginx]
 
- 
-- name: Create a symbolic link for Uptime Kuma configuration
-  file:
+- name: Render Nginx site config for Uptime Kuma
+  ansible.builtin.template:
+    src: nginx-uptime-kuma.conf.j2
+    dest: /etc/nginx/sites-available/uptime-kuma
+    owner: root
+    group: root
+    mode: "0644"
+  become: true
+  notify: Validate and reload Nginx
+  tags: [uptime_kuma, config, nginx]
+
+- name: Enable Uptime Kuma site
+  ansible.builtin.file:
     src: /etc/nginx/sites-available/uptime-kuma
     dest: /etc/nginx/sites-enabled/uptime-kuma
-    state: link  # This specifies that it's a symbolic link
+    state: link
+  become: true
+  notify: Validate and reload Nginx
+  tags: [uptime_kuma, config, nginx]
 
-- name: Remove the default configuration file
-  file:
+- name: Remove default Nginx site
+  ansible.builtin.file:
     path: /etc/nginx/sites-enabled/default
     state: absent
+  become: true
+  notify: Validate and reload Nginx
+  tags: [uptime_kuma, config, nginx]
 
-- name: Reload Nginx to apply changes
-  service:
+- name: Ensure Nginx is enabled and started
+  ansible.builtin.service:
     name: nginx
-    state: reloaded
+    enabled: true
+    state: started
+  become: true
+  tags: [uptime_kuma, service, nginx]

@@ -1,8 +1,46 @@
-promtail_binary_file: https://github.com/grafana/loki/releases/download/v2.7.0/promtail-linux-amd64.zip
+---
+promtail_version: "3.5.12"
+
+# Supported target architectures.
+promtail_arch_map:
+  x86_64: amd64
+  aarch64: arm64
+promtail_arch: "{{ promtail_arch_map[ansible_facts['architecture']] }}"
+promtail_binary_name: "promtail-linux-{{ promtail_arch }}"
+promtail_binary_url: "https://github.com/grafana/loki/releases/download/v{{ promtail_version }}/{{ promtail_binary_name }}.zip"
+
+# Optional sha256 checksums per arch (see Loki release page for SHA256SUMS).
+promtail_binary_sha256_map: {}
+promtail_binary_sha256: "{{ promtail_binary_sha256_map[promtail_arch] | default('') }}"
+
+# Filesystem layout.
 promtail_user: promtail
-promtail_group: "{{promtail_user}}"
-promtail_http_port: 9080
-promtail_grpc_port: 9097
+promtail_group: "{{ promtail_user }}"
 promtail_installation: /opt/promtail
 promtail_config_path: /etc/promtail
 promtail_config_name: promtail-config.yaml
+promtail_positions_file: /var/lib/promtail/positions.yaml
+
+# Network.
+promtail_listen_address: 127.0.0.1
+promtail_http_port: 9080
+promtail_grpc_port: 9097
+
+# Loki push endpoint.
+promtail_loki_url: "http://127.0.0.1:3100/loki/api/v1/push"
+
+# Default scrape jobs. Override or extend in inventory.
+promtail_scrape_configs:
+  - job_name: system
+    static_configs:
+      - targets: [localhost]
+        labels:
+          job: varlogs
+          host: "{{ ansible_facts['hostname'] }}"
+          __path__: /var/log/*.log
+  - job_name: nginx
+    static_configs:
+      - targets: [localhost]
+        labels:
+          job: nginx
+          __path__: /var/log/nginx/*.log

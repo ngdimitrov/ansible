@@ -1,9 +1,14 @@
 ---
-- name: Install Uptime Kuma
+- name: Install full VertaStack monitoring stack
   hosts: cluster1
-  become: yes
+  become: true
+  gather_facts: true
   roles:
-    - uptime_kuma
-    - loki
-    - promtail
-    - grafana
+    - role: uptime_kuma
+      tags: [uptime_kuma]
+    - role: loki
+      tags: [loki]
+    - role: promtail
+      tags: [promtail]
+    - role: grafana
+      tags: [grafana]

@@ -1,18 +1,21 @@
 ---
-- hosts: localhost
-  gather_facts: no
+- name: Demo of register and conditional debug.
+  hosts: localhost
+  gather_facts: false
   connection: local
+
+  handlers:
+    - name: Notify that command resulted in a change.
+      ansible.builtin.debug:
+        msg: "Command resulted in a change!"
 
   tasks:
     - name: Register the output of the 'uptime' command.
-      command: uptime
+      ansible.builtin.command: uptime
       register: system_uptime
+      changed_when: false
+      notify: Notify that command resulted in a change.
 
     - name: Print the registered output of the 'uptime' command.
-      debug:
+      ansible.builtin.debug:
         var: system_uptime.stdout
-
-    - name: Print a message if a command resulted in a change.
-      debug:
-        msg: "Command resulted in a change!"
-      when: system_uptime is changed

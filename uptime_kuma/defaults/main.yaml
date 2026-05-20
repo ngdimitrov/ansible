@@ -1,3 +1,20 @@
-nodejs_url: "https://deb.nodesource.com/setup_16.x"
-uptime_kuma_repo: "https://github.com/louislam/uptime-kuma.git"
-uptime_kuma_version: "1.21.3"
+---
+# Node.js (NodeSource).
+nodejs_major_version: "22"
+nodejs_keyring_path: /etc/apt/keyrings/nodesource.gpg
+nodejs_gpg_key_url: https://deb.nodesource.com/gpgkey/nodesource-repo.gpg.key
+
+# Uptime Kuma source.
+uptime_kuma_repo: https://github.com/louislam/uptime-kuma.git
+uptime_kuma_version: "2.3.2"
+uptime_kuma_install_dir: /opt/uptime-kuma
+
+# Dedicated service user (avoids running the app as root).
+uptime_kuma_user: uptime-kuma
+uptime_kuma_group: "{{ uptime_kuma_user }}"
+uptime_kuma_home: /var/lib/uptime-kuma
+
+# Network. The Node app binds to this address; Nginx fronts it on port 80.
+uptime_kuma_bind_address: 127.0.0.1
+uptime_kuma_port: 3001
+uptime_kuma_server_name: localhost

@@ -1,23 +1,50 @@
 ---
-- name: "https"
-  apt:
-    name: apt-transport-https
+- name: Install transport packages
+  ansible.builtin.apt:
+    name:
+      - apt-transport-https
+      - ca-certificates
+      - gnupg
+      - curl
     state: present
-      #    update_cache: yes
+    update_cache: true
+  become: true
 
+- name: Ensure apt keyrings directory exists
+  ansible.builtin.file:
+    path: /etc/apt/keyrings
+    state: directory
+    owner: root
+    group: root
+    mode: "0755"
+  become: true
 
-- name: apt key telegraf
-  apt_key:
-    url: https://repos.influxdata.com/influxdata-archive_compat.key
-    state: present
+- name: Download InfluxData GPG key
+  ansible.builtin.get_url:
+    url: "{{ telegraf_gpg_key_url }}"
+    dest: /tmp/influxdata.gpg.key
+    mode: "0644"
+  become: true
 
+- name: Dearmor InfluxData GPG key
+  ansible.builtin.command:
+    cmd: gpg --batch --yes --dearmor -o {{ telegraf_keyring_path }} /tmp/influxdata.gpg.key
+    creates: "{{ telegraf_keyring_path }}"
+  become: true
 
-- name: telegraf repo
-  copy:
-    src: /etc/ansible/roles/telegraf/templates/influxdb.list.j2
+- name: Render InfluxData apt source list
+  ansible.builtin.template:
+    src: influxdb.list.j2
     dest: /etc/apt/sources.list.d/influxdata.list
+    owner: root
+    group: root
+    mode: "0644"
+  become: true
 
-- name: install telegraf
-  apt:
+- name: Install Telegraf
+  ansible.builtin.apt:
     name: telegraf
-      #    update_cache: yes
+    state: present
+    update_cache: true
+  become: true
+  notify: Restart Telegraf

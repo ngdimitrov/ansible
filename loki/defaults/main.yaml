@@ -1,10 +1,40 @@
-loki_binary_file: https://github.com/grafana/loki/releases/download/v2.7.0/loki-linux-amd64.zip
+---
+loki_version: "3.7.2"
+
+# Supported target architectures.
+loki_arch_map:
+  x86_64: amd64
+  aarch64: arm64
+loki_arch: "{{ loki_arch_map[ansible_facts['architecture']] }}"
+loki_binary_name: "loki-linux-{{ loki_arch }}"
+loki_binary_url: "https://github.com/grafana/loki/releases/download/v{{ loki_version }}/{{ loki_binary_name }}.zip"
+
+# Optional sha256 checksums per arch.
+# When empty, the download is unverified. Override per arch in inventory
+# (e.g. loki_binary_sha256_map: { amd64: "abc...", arm64: "def..." }).
+loki_binary_sha256_map: {}
+loki_binary_sha256: "{{ loki_binary_sha256_map[loki_arch] | default('') }}"
+
+# Filesystem layout.
 loki_user: loki
-loki_group: "{{loki_user}}"
+loki_group: "{{ loki_user }}"
 loki_installation: /opt/loki
 loki_config_path: /etc/loki
-loki_data_dir: /data/loki
-loki_http_port: 3100
-loki_grcp_port: 9095
 loki_config_name: loki-config.yaml
-loki_log_file: /var/log/loki
+loki_data_dir: /data/loki
+loki_log_dir: /var/log/loki
+
+# Network. Loki has no built-in authentication when auth_enabled=false, so by
+# default bind to loopback only. Override loki_listen_address to expose it.
+loki_listen_address: 127.0.0.1
+loki_http_port: 3100
+loki_grpc_port: 9095
+
+# Multi-tenant authentication. Leave false for single-tenant deployments.
+loki_auth_enabled: false
+
+# Log retention (Loki rejects samples older than this).
+loki_retention_period: 168h
+
+# Disable anonymous usage reporting to Grafana Labs.
+loki_analytics_reporting_enabled: false

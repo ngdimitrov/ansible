@@ -1,0 +1,30 @@
+{{ ansible_managed | comment(decoration='# ') }}
+[Unit]
+Description=Uptime Kuma — self-hosted monitoring tool
+Documentation=https://github.com/louislam/uptime-kuma
+After=network-online.target
+Wants=network-online.target
+
+[Service]
+Type=simple
+User={{ uptime_kuma_user }}
+Group={{ uptime_kuma_group }}
+WorkingDirectory={{ uptime_kuma_install_dir }}
+ExecStart=/usr/bin/node server/server.js
+Environment=NODE_ENV=production
+Environment=UPTIME_KUMA_HOST={{ uptime_kuma_bind_address }}
+Environment=UPTIME_KUMA_PORT={{ uptime_kuma_port }}
+Environment=DATA_DIR={{ uptime_kuma_home }}/data
+Restart=always
+RestartSec=5
+TimeoutStopSec=30
+
+# Hardening
+NoNewPrivileges=true
+PrivateTmp=true
+ProtectSystem=full
+ProtectHome=read-only
+ReadWritePaths={{ uptime_kuma_home }} {{ uptime_kuma_install_dir }}
+
+[Install]
+WantedBy=multi-user.target

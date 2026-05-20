@@ -1,0 +1,130 @@
+---
+# Monolithic Uptime Kuma install (no roles).
+# For the roles-based version see ../../uptime_kuma role and ../../main.yaml.
+- name: Install Uptime Kuma (monolithic playbook)
+  hosts: cluster1
+  become: true
+
+  vars:
+    nodejs_major_version: "22"
+    nodejs_keyring_path: /etc/apt/keyrings/nodesource.gpg
+    nodejs_gpg_key_url: https://deb.nodesource.com/gpgkey/nodesource-repo.gpg.key
+    uptime_kuma_install_dir: /opt/uptime-kuma
+    uptime_kuma_user: uptime-kuma
+    uptime_kuma_home: /var/lib/uptime-kuma
+    uptime_kuma_bind_address: 127.0.0.1
+    uptime_kuma_port: 3001
+    uptime_kuma_version: "2.3.2"
+
+  tasks:
+    - name: Update apt cache
+      ansible.builtin.apt:
+        update_cache: true
+        cache_valid_time: 3600
+
+    - name: Install prerequisites
+      ansible.builtin.apt:
+        name:
+          - git
+          - curl
+          - build-essential
+          - gnupg
+          - ca-certificates
+        state: present
+
+    - name: Ensure apt keyrings directory exists
+      ansible.builtin.file:
+        path: /etc/apt/keyrings
+        state: directory
+        owner: root
+        group: root
+        mode: "0755"
+
+    - name: Download NodeSource GPG key
+      ansible.builtin.get_url:
+        url: "{{ nodejs_gpg_key_url }}"
+        dest: /tmp/nodesource.gpg.key
+        owner: root
+        group: root
+        mode: "0644"
+
+    - name: Dearmor NodeSource GPG key
+      ansible.builtin.command:
+        cmd: gpg --batch --yes --dearmor -o {{ nodejs_keyring_path }} /tmp/nodesource.gpg.key
+        creates: "{{ nodejs_keyring_path }}"
+
+    - name: Add NodeSource apt repository
+      ansible.builtin.apt_repository:
+        repo: "deb [signed-by={{ nodejs_keyring_path }}] https://deb.nodesource.com/node_{{ nodejs_major_version }}.x nodistro main"
+        filename: nodesource
+        state: present
+        update_cache: true
+
+    - name: Install Node.js
+      ansible.builtin.apt:
+        name: nodejs
+        state: present
+
+    - name: Create Uptime Kuma user
+      ansible.builtin.user:
+        name: "{{ uptime_kuma_user }}"
+        system: true
+        shell: /usr/sbin/nologin
+        home: "{{ uptime_kuma_home }}"
+        create_home: true
+        state: present
+
+    - name: Clone Uptime Kuma repository
+      ansible.builtin.git:
+        repo: https://github.com/louislam/uptime-kuma.git
+        dest: "{{ uptime_kuma_install_dir }}"
+        version: "{{ uptime_kuma_version }}"
+
+    - name: Set ownership on Uptime Kuma install dir
+      ansible.builtin.file:
+        path: "{{ uptime_kuma_install_dir }}"
+        state: directory
+        owner: "{{ uptime_kuma_user }}"
+        group: "{{ uptime_kuma_user }}"
+        recurse: true
+
+    - name: Setup Uptime Kuma (install deps + build dist)
+      ansible.builtin.command:
+        cmd: npm run setup
+        chdir: "{{ uptime_kuma_install_dir }}"
+        creates: "{{ uptime_kuma_install_dir }}/dist"
+      become: true
+      become_user: "{{ uptime_kuma_user }}"
+
+    - name: Render Uptime Kuma systemd unit
+      ansible.builtin.copy:
+        dest: /etc/systemd/system/uptime-kuma.service
+        owner: root
+        group: root
+        mode: "0644"
+        content: |
+          [Unit]
+          Description=Uptime Kuma — self-hosted monitoring tool
+          After=network-online.target
+          Wants=network-online.target
+
+          [Service]
+          Type=simple
+          User={{ uptime_kuma_user }}
+          WorkingDirectory={{ uptime_kuma_install_dir }}
+          ExecStart=/usr/bin/node server/server.js
+          Environment=NODE_ENV=production
+          Environment=UPTIME_KUMA_HOST={{ uptime_kuma_bind_address }}
+          Environment=UPTIME_KUMA_PORT={{ uptime_kuma_port }}
+          Environment=DATA_DIR={{ uptime_kuma_home }}/data
+          Restart=always
+
+          [Install]
+          WantedBy=multi-user.target
+
+    - name: Ensure Uptime Kuma service is enabled and started
+      ansible.builtin.systemd:
+        name: uptime-kuma
+        enabled: true
+        daemon_reload: true
+        state: started

@@ -1,0 +1,12 @@
+---
+- name: Configure SELinux for SSH on a non-default port.
+  hosts: centos
+  become: true
+
+  tasks:
+    - name: Tell SELinux about SSH's new port.
+      community.general.seport:
+        ports: "2849"
+        proto: tcp
+        setype: ssh_port_t
+        state: present

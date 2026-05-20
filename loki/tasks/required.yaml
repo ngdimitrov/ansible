@@ -1,23 +1,29 @@
+---
 - name: Update apt cache
-  apt:
-    update_cache: yes
-  become: yes
+  ansible.builtin.apt:
+    update_cache: true
+    cache_valid_time: 3600
+  become: true
+  tags: [loki, install]
 
 - name: Install unzip package
-  apt:
-    name: ["zip", "unzip"]
+  ansible.builtin.apt:
+    name: unzip
     state: present
-  become: yes
+  become: true
+  tags: [loki, install]
 
-- name: Create directories for install, conf and logs
-  file:
-    path: "{{item}}"
+- name: Create directories owned by Loki
+  ansible.builtin.file:
+    path: "{{ item.path }}"
     state: directory
-    owner: "{{loki_user}}"
-    group: "{{loki_group}}"
-    mode: '0700'
+    owner: "{{ loki_user }}"
+    group: "{{ loki_group }}"
+    mode: "{{ item.mode }}"
   loop:
-    - "{{loki_installation}}"
-    - "{{loki_config_path}}"
-    - "{{loki_log_file}}"
-  become: yes
+    - { path: "{{ loki_installation }}", mode: "0755" }
+    - { path: "{{ loki_config_path }}", mode: "0750" }
+    - { path: "{{ loki_data_dir }}", mode: "0750" }
+    - { path: "{{ loki_log_dir }}", mode: "0750" }
+  become: true
+  tags: [loki, install]

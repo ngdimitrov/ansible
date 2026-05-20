@@ -1,12 +1,15 @@
 ---
-- hosts: localhost
+- name: Demo of ansible-lint-clean playbook.
+  hosts: localhost
   gather_facts: false
-  connetion: local
+  connection: local
 
   tasks:
-    - shell: uptime
+    - name: Get the system uptime.
+      ansible.builtin.command: uptime
       register: system_uptime
+      changed_when: false
 
     - name: Print the registered output of the 'uptime' command.
-      debug:
+      ansible.builtin.debug:
         var: system_uptime.stdout

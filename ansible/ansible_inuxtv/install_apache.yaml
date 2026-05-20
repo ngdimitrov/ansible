@@ -1,14 +1,13 @@
 ---
-
-- hosts: all
-  tasks: 
-  
-   - name: install apache2 and php packages
-     apt:
-      name:
-        - apache2
-        - libapache2-mod-php
-      state: latest
-      update_cache: yes
-     when: ansible_distribution == "Ubuntu"  
-
+- name: Install Apache and PHP.
+  hosts: all
+  become: true
+  tasks:
+    - name: Install apache2 and php packages.
+      ansible.builtin.apt:
+        name:
+          - apache2
+          - libapache2-mod-php
+        state: present
+        update_cache: true
+      when: ansible_distribution == "Ubuntu"

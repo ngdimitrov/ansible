@@ -1,46 +1,50 @@
 # Promtail
-Promtail is an agent which ships the contents of local logs to a private Grafana Loki instance or Grafana Cloud.
 
-## Variables:
-* promtail_binary_file: The Promtail source
-* promtail_user: user
-* promtail_group: user
-* promtail_http_port: Port http 
-* promtail_grpc_port: Port grcp
-* promtail_installation: Path for installation on Promtail
-* promtail_config_path: Path for configuration Promtail
-* promtail_config_name: Config file
+Ansible role to install and configure [Grafana Promtail](https://grafana.com/docs/loki/latest/clients/promtail/) — the log shipping agent for Loki.
 
-## Add this to the config file to provide the configuration for filter nginx logs.
+> [!NOTE]
+> Promtail is in maintenance mode upstream; new deployments should consider [Grafana Alloy](https://grafana.com/docs/alloy/). This role still ships Promtail v3.5.x (last release with `linux-arm64` binary).
 
-``````
- pipeline_stages:
-        - drop:
-            expression: '(?P<remote_addr>.+?) - (?P<a>.+?) \[(?P<b>.+?)\] \"(?P<c>.+?)\" (?P<status>2[0-9][0-9]) (?P<d>.+?) (?P<e>.+?) (?P<f>.+?) \"(?P<g>.+?)\" \((?P<h>.+?) (?P<i>.+?) (?P<k>.+?)\) (?P<request_time>.+?)$'
+## Requirements
 
-``````
+- Ubuntu 22.04 (jammy) or 24.04 (noble)
+- Ansible 2.10+
+- Loki reachable at `promtail_loki_url`
 
-### Systemd 
-``````
-[Unit]
-Description=Promtail service
-After=network.target
+## Role variables
 
-[Service]
-User=root
-Group=root
-Type=simple
-ExecStart={{promtail_installation}}/promtail-linux-amd64 -config.file {{promtail_config_path}}/promtail-config.yaml
-Restart=always
+See [`defaults/main.yaml`](defaults/main.yaml). Key variables:
 
-[Install]
-WantedBy=multi-user.target
-``````
+| Variable | Default | Description |
+|---|---|---|
+| `promtail_version` | `3.5.12` | Upstream release |
+| `promtail_listen_address` | `127.0.0.1` | Bind address |
+| `promtail_http_port` / `promtail_grpc_port` | `9080` / `9097` | HTTP / gRPC ports |
+| `promtail_loki_url` | `http://127.0.0.1:3100/loki/api/v1/push` | Where to send logs |
+| `promtail_scrape_configs` | scrapes `/var/log/*.log` + `/var/log/nginx/*.log` | List of scrape jobs (override to customize) |
+| `promtail_binary_sha256_map` | `{}` | Per-arch SHA256 |
+| `promtail_user` / `promtail_group` | `promtail` | Service user; added to `adm` group for `/var/log` access |
 
-## Inventory example:
+## Example invocation
 
-```yamlex
-monitoring_servers:
-  hosts: 
-    cluster1
+```yaml
+- hosts: monitoring_servers
+  become: true
+  roles:
+    - role: promtail
+      vars:
+        promtail_loki_url: http://loki.internal:3100/loki/api/v1/push
+        promtail_scrape_configs:
+          - job_name: app
+            static_configs:
+              - targets: [localhost]
+                labels: { job: app, __path__: /var/log/app/*.log }
 ```
+
+## Tags
+
+`promtail`, `install`, `config`, `service`, `systemd`.
+
+## License
+
+MIT

@@ -1,9 +1,3 @@
-- name: "Prerequisites"
-  import_tasks: /etc/ansible/roles/telegraf/tasks/telegraf.yaml
-  connection: local
-  run_once: true
-  become: false
-
-    #- include_tasks: victoria_metrics.yml
-
-    #- include_tasks: /etc/ansible/roles/telegraf/tasks/telegraf.yaml
+---
+- name: Install Telegraf prerequisites
+  ansible.builtin.include_tasks: telegraf.yaml

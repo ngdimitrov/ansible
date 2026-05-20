@@ -1,4 +1,6 @@
- - hosts: "prod"
-   roles:
-     - statsd
-
+---
+- name: Install StatsD
+  hosts: prod
+  become: true
+  roles:
+    - role: statsd

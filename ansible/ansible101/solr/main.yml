@@ -1,5 +1,6 @@
 ---
-- hosts: solr
+- name: Install and run Apache Solr.
+  hosts: solr
   become: true
 
   vars_files:
@@ -7,46 +8,51 @@
 
   pre_tasks:
     - name: Update apt cache if needed.
-      apt:
+      ansible.builtin.apt:
         update_cache: true
         cache_valid_time: 3600
 
   handlers:
-    - name: restart solr
-      service: name=solr state=restarted
-
-  tasks:
-    - name: Change config.
-      command: somenthing to change config
-      notify: restart solr
+    - name: Restart Solr.
+      ansible.builtin.service:
+        name: solr
+        state: restarted
 
   tasks:
     - name: Install Java.
-      apt: name=openjdk-8-jdk state=present
-    
+      ansible.builtin.apt:
+        name: openjdk-21-jdk-headless
+        state: present
+
     - name: Download Solr.
-      get_url:
-        url: https://www.apache.org/dyn/closer.lua/solr/solr/{{ solr_version }}/solr-9.2.1-src.tgz?action=download
+      ansible.builtin.get_url:
+        url: "https://archive.apache.org/dist/solr/solr/{{ solr_version }}/solr-{{ solr_version }}.tgz"
         dest: "{{ download_dir }}/solr-{{ solr_version }}.tgz"
         checksum: "{{ solr_checksum }}"
-      
+        mode: "0644"
+
     - name: Expand Solr.
-      unarchive:
+      ansible.builtin.unarchive:
         src: "{{ download_dir }}/solr-{{ solr_version }}.tgz"
-        dest: "{{ download_dir }}"      
+        dest: "{{ download_dir }}"
         remote_src: true
         creates: "{{ download_dir }}/solr-{{ solr_version }}/README.txt"
-        
+
     - name: Run Solr installation script.
-      command: >
+      ansible.builtin.command: >
         {{ download_dir }}/solr-{{ solr_version }}/bin/install_solr_service.sh
         {{ download_dir }}/solr-{{ solr_version }}.tgz
-        -i /opt 
+        -i /opt
         -d /var/solr
         -u solr
         -s solr
         -p 8983
-        creates={{ solr_dir }}/bin/solr
-     
-    - name: Ensure solr is startd and enable at boot.
-      service: name=solr state=started enabled=yes
+      args:
+        creates: "{{ solr_dir }}/bin/solr"
+      notify: Restart Solr.
+
+    - name: Ensure Solr is started and enabled at boot.
+      ansible.builtin.service:
+        name: solr
+        state: started
+        enabled: true

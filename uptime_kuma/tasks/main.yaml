@@ -1,51 +1,89 @@
 ---
-- name: Update apt cache
-  apt:
-    update_cache: yes
+- name: Install Node.js prerequisites
+  ansible.builtin.import_tasks: nodejs.yaml
+  tags: [uptime_kuma, install]
 
-- name: "Install Node.js"
-  include_tasks: nodejs.yaml
-
-- name: Install required packages
-  apt:
-    name: [git, curl, software-properties-common]
+- name: Install build dependencies
+  ansible.builtin.apt:
+    name:
+      - git
+      - curl
+      - build-essential
     state: present
-  become: yes
+    update_cache: true
+    cache_valid_time: 3600
+  become: true
+  tags: [uptime_kuma, install]
 
-- name: Update apt cache
-  become: yes
-  apt:
-    update_cache: yes
+- name: Create Uptime Kuma group
+  ansible.builtin.group:
+    name: "{{ uptime_kuma_group }}"
+    system: true
+    state: present
+  become: true
+  tags: [uptime_kuma, install]
 
-- name: Clone Uptime Kuma repository
-  git:
-    repo: "{{uptime_kuma_repo}}"
-    dest: /opt/uptime-kuma
-    version: "{{uptime_kuma_version}}"
-  become: yes
+- name: Create Uptime Kuma user
+  ansible.builtin.user:
+    name: "{{ uptime_kuma_user }}"
+    group: "{{ uptime_kuma_group }}"
+    system: true
+    shell: /usr/sbin/nologin
+    home: "{{ uptime_kuma_home }}"
+    create_home: true
+    state: present
+  become: true
+  tags: [uptime_kuma, install]
 
-- name: Install pm2
-  command: npm install pm2@latest -g
-  become: yes
+- name: Create Uptime Kuma install dir owned by the service user
+  ansible.builtin.file:
+    path: "{{ uptime_kuma_install_dir }}"
+    state: directory
+    owner: "{{ uptime_kuma_user }}"
+    group: "{{ uptime_kuma_group }}"
+    mode: "0755"
+  become: true
+  tags: [uptime_kuma, install]
 
-- name: Install Uptime Kuma dependencies
-  command: npm install
-  args:
-    chdir: /opt/uptime-kuma
-  become: yes
+- name: Clone Uptime Kuma repository as service user
+  ansible.builtin.git:
+    repo: "{{ uptime_kuma_repo }}"
+    dest: "{{ uptime_kuma_install_dir }}"
+    version: "{{ uptime_kuma_version }}"
+  become: true
+  become_user: "{{ uptime_kuma_user }}"
+  tags: [uptime_kuma, install]
 
-- name: Build Uptime Kuma
-  command: npm run setup
-  args:
-    chdir: /opt/uptime-kuma
-  become: yes
+- name: Setup Uptime Kuma (install deps + build dist)
+  ansible.builtin.command:
+    cmd: npm run setup
+    chdir: "{{ uptime_kuma_install_dir }}"
+    creates: "{{ uptime_kuma_install_dir }}/dist"
+  become: true
+  become_user: "{{ uptime_kuma_user }}"
+  tags: [uptime_kuma, install]
 
-- name: Start Uptime Kuma
-  command: pm2 start server/server.js --name uptime-kuma
-  args:
-    chdir: /opt/uptime-kuma
-  become: yes
+- name: Render Uptime Kuma systemd unit
+  ansible.builtin.template:
+    src: uptime-kuma.service.j2
+    dest: /etc/systemd/system/uptime-kuma.service
+    owner: root
+    group: root
+    mode: "0644"
+    validate: "systemd-analyze verify %s"
+  become: true
+  notify: Restart Uptime Kuma
+  tags: [uptime_kuma, config, systemd]
 
-- name: "Install Nginx"
-  include_tasks: nginx.yaml
+- name: Ensure Uptime Kuma service is enabled and started
+  ansible.builtin.systemd:
+    name: uptime-kuma
+    enabled: true
+    daemon_reload: true
+    state: started
+  become: true
+  tags: [uptime_kuma, service]
 
+- name: Install Nginx reverse proxy
+  ansible.builtin.import_tasks: nginx.yaml
+  tags: [uptime_kuma, nginx]

@@ -1,14 +1,27 @@
-- name: Create promtail group
-  group:
-    name: "{{promtail_group}}"
+---
+- name: Create Promtail group
+  ansible.builtin.group:
+    name: "{{ promtail_group }}"
     system: true
     state: present
-  become: yes
+  become: true
+  tags: [promtail, install]
 
-- name: Create promtail user
-  user:
-    name: "{{promtail_user}}"
-    group: "{{promtail_group}}"
+- name: Create Promtail user
+  ansible.builtin.user:
+    name: "{{ promtail_user }}"
+    group: "{{ promtail_group }}"
     system: true
+    shell: /usr/sbin/nologin
+    create_home: false
     state: present
-  become: yes
+  become: true
+  tags: [promtail, install]
+
+- name: Allow promtail user to read system logs
+  ansible.builtin.user:
+    name: "{{ promtail_user }}"
+    groups: adm
+    append: true
+  become: true
+  tags: [promtail, install]

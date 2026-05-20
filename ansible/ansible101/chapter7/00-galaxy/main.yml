@@ -1,5 +1,5 @@
 ---
-#Run with: ansible-playbook main.yml -K
+# Run with: ansible-playbook main.yml -K
 - hosts: localhost
   connection: local
 
@@ -10,5 +10,4 @@
   roles:
     - elliotweiser.osx-command-line-tools
     - role: geerlingguy.homebrew
-      become: yes
-
+      become: true
